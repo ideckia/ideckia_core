@@ -29,7 +29,7 @@ class WebSocketServer {
 	var ws:WebSocketServerJs;
 
 	public function new() {
-		var core = js.node.Http.createServer(function(request, response) {
+		var server = js.node.Http.createServer(function(request, response) {
 			handleRequest(request).then(res -> {
 				response.writeHead(res.code, res.headers);
 				if (res.readStream != null)
@@ -39,7 +39,7 @@ class WebSocketServer {
 			});
 		});
 
-		core.listen(port, () -> {
+		server.listen(port, () -> {
 			var banner = haxe.Resource.getString('banner');
 			banner = banner.replace('::version::', Ideckia.CURRENT_VERSION);
 			banner = banner.replace('::buildDate::', Macros.buildDate().toString());
@@ -48,7 +48,7 @@ class WebSocketServer {
 		});
 
 		ws = new WebSocketServerJs({
-			core: core
+			server: server
 		});
 
 		ws.on('connection', function(connectionjs:WebSocketConnectionJs) {
