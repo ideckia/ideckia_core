@@ -3,7 +3,7 @@ package managers;
 import exceptions.ItemNotFoundException;
 
 using api.IdeckiaApi;
-using api.internal.ServerApi;
+using api.internal.CoreApi;
 
 class ClientManager {
 	public static function handleMsg(msg:ClientMsg) {

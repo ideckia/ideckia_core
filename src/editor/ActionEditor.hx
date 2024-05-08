@@ -1,6 +1,6 @@
 import js.html.UListElement;
 import api.IdeckiaApi;
-import api.internal.ServerApi;
+import api.internal.CoreApi;
 import hx.Selectors.Cls;
 import hx.Selectors.Id;
 import hx.Selectors.Tag;
@@ -20,7 +20,7 @@ class ActionEditor {
 	static var changeListeners:Array<{element:Element, changeListener:Event->Void}> = [];
 	static var listeners:Array<Utils.Listener> = [];
 
-	public static function show(action:ActionDef, actionStatus:ActionStatus, parentState:ServerState) {
+	public static function show(action:ActionDef, actionStatus:ActionStatus, parentState:CoreState) {
 		var li = Utils.cloneElement(Id.action_list_item_tpl.get(), LIElement);
 		switch Tag.span.firstFrom(li) {
 			case Some(v):

@@ -56,7 +56,7 @@ class UpdateManager {
 		}
 	}
 
-	public static function checkServerRelease() {
+	public static function checkCoreRelease() {
 		if (!checkUpdatesFlag)
 			return;
 
@@ -69,17 +69,17 @@ class UpdateManager {
 			case _: '';
 		};
 		var filename = 'ideckia-$ext';
-		checkGithubRemoteVersion('ideckia_server', filename, extractSemVer(Ideckia.CURRENT_VERSION), 'ideckia', 'ideckia_server').then(downloadUrl -> {
-			downloadRemoteAsset('ideckia_server', downloadUrl).then(bytes -> {
+		checkGithubRemoteVersion('ideckia_core', filename, extractSemVer(Ideckia.CURRENT_VERSION), 'ideckia', 'ideckia_core').then(downloadUrl -> {
+			downloadRemoteAsset('ideckia_core', downloadUrl).then(bytes -> {
 				try {
-					var updateDir = Ideckia.getAppPath('server_update');
+					var updateDir = Ideckia.getAppPath('core_update');
 					if (!sys.FileSystem.exists(updateDir))
 						sys.FileSystem.createDirectory(updateDir);
 					var savePath = haxe.io.Path.join([updateDir, filename]);
 					sys.io.File.saveBytes(savePath, bytes);
-					Ideckia.dialog.info('New version of ideckia_server downloaded', 'Please quit Ideckia and override the executable with [$savePath].');
+					Ideckia.dialog.info('New version of ideckia_core downloaded', 'Please quit Ideckia and override the executable with [$savePath].');
 				} catch (e:haxe.Exception) {
-					var msg = 'Error saving [ideckia_server] update: ${e.message}';
+					var msg = 'Error saving [ideckia_core] update: ${e.message}';
 					Ideckia.dialog.error('Error when updating', msg);
 					Log.error(msg);
 					Log.raw(e.stack);

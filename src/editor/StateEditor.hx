@@ -1,7 +1,7 @@
 import api.IdeckiaApi.Endpoint;
 import api.IdeckiaApi.ActionStatus;
 import api.IdeckiaApi.TextPosition;
-import api.internal.ServerApi;
+import api.internal.CoreApi;
 import hx.Selectors.Cls;
 import hx.Selectors.Id;
 import hx.Selectors.Tag;
@@ -16,12 +16,12 @@ import js.html.SelectElement;
 using StringTools;
 
 class StateEditor {
-	static var editingState:ServerState;
+	static var editingState:CoreState;
 	static var draggingActionIndex:UInt;
 
 	static var listeners:Array<Utils.Listener> = [];
 
-	public static function show(state:ServerState, deletable:Bool) {
+	public static function show(state:CoreState, deletable:Bool) {
 		Id.item_kind_states_properties.get().classList.remove(Cls.hidden);
 		var parentLi = Utils.cloneElement(Id.state_list_item_tpl.get(), LIElement);
 		switch Tag.span.firstFrom(parentLi) {
@@ -224,7 +224,7 @@ class StateEditor {
 		targetElement.classList.remove(Cls.drag_over);
 	}
 
-	static function onDrop(e:Event, state:ServerState) {
+	static function onDrop(e:Event, state:CoreState) {
 		for (d in Cls.drag_over.get())
 			d.classList.remove(Cls.drag_over);
 		var targetActionIndex = Std.parseInt(cast(e.currentTarget, Element).dataset.action_id);
@@ -244,7 +244,7 @@ class StateEditor {
 		edit(editingState);
 	}
 
-	public static function edit(state:ServerState) {
+	public static function edit(state:CoreState) {
 		if (state == null) {
 			Id.state_properties.get().classList.add(Cls.hidden);
 			return;

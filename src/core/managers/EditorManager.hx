@@ -1,6 +1,6 @@
 package managers;
 
-import api.internal.ServerApi;
+import api.internal.CoreApi;
 import websocket.WebSocketConnection;
 
 using api.IdeckiaApi;
@@ -20,8 +20,8 @@ class EditorManager {
 					icons: LayoutManager.layout.icons
 				}
 				ActionManager.getEditorActionDescriptors().then(actionDescriptors -> {
-					var editorData:ServerMsg<EditorData> = {
-						type: ServerMsgType.editorData,
+					var editorData:CoreMsg<EditorData> = {
+						type: CoreMsgType.editorData,
 						data: {
 							layout: layoutWithoutDynamicDir,
 							actionDescriptors: actionDescriptors

@@ -1,4 +1,4 @@
-import api.internal.ServerApi;
+import api.internal.CoreApi;
 import hx.Selectors.Cls;
 import hx.Selectors.Id;
 import js.html.Element;

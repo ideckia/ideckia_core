@@ -1,6 +1,6 @@
 import js.html.Element;
 import js.html.ImageElement;
-import api.internal.ServerApi;
+import api.internal.CoreApi;
 import hx.Selectors.Cls;
 import hx.Selectors.Id;
 import hx.Selectors.Tag;
@@ -11,20 +11,20 @@ import js.html.SelectElement;
 import haxe.ds.Option;
 
 class ItemEditor {
-	static var editingItem:ServerItem;
+	static var editingItem:CoreItem;
 	static var isFixedItem:Bool;
 	static var draggingStateIndex:UInt;
 	static var listeners:Array<Utils.Listener> = [];
 	static var cellListeners:Array<Utils.Listener> = [];
 
-	public static function show(item:ServerItem, isFixed:Bool = false):Option<Element> {
+	public static function show(item:CoreItem, isFixed:Bool = false):Option<Element> {
 		if (item == null)
 			return None;
 
 		var cell = Utils.cloneElement(Id.layout_grid_item_tpl.get(), DivElement);
 		cell.dataset.item_id = Std.string(item.id.toUInt());
-		var executionCallback:ServerItem->Void = (item) -> {};
-		var longPressCallback:ServerItem->Void = (item) -> {};
+		var executionCallback:CoreItem->Void = (item) -> {};
+		var longPressCallback:CoreItem->Void = (item) -> {};
 
 		var text = '';
 		var textPosition = Cls.layout_bottom_text;
@@ -135,7 +135,7 @@ class ItemEditor {
 		edit(oldItem, isFixedItem);
 	}
 
-	public static function edit(item:ServerItem, isFixed:Bool) {
+	public static function edit(item:CoreItem, isFixed:Bool) {
 		editingItem = item;
 		isFixedItem = isFixed;
 
@@ -172,7 +172,7 @@ class ItemEditor {
 				if (js.Browser.window.confirm('::confirm_remove_item::')) {
 					editingItem.kind = null;
 
-					function removeItem(items:Array<ServerItem>) {
+					function removeItem(items:Array<CoreItem>) {
 						for (i in items) {
 							if (i.id == editingItem.id) {
 								items.remove(i);
@@ -295,7 +295,7 @@ class ItemEditor {
 		targetElement.classList.remove(Cls.drag_over);
 	}
 
-	static function onDrop(e:Event, item:ServerItem) {
+	static function onDrop(e:Event, item:CoreItem) {
 		for (d in Cls.drag_over.get())
 			d.classList.remove(Cls.drag_over);
 		var targetStateIndex = Std.parseInt(cast(e.currentTarget, Element).dataset.state_id);

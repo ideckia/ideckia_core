@@ -1,3 +1,3 @@
-# ideckia server
+# ideckia core
 
 this is the repository for the computer side of [ideckia](https://github.com/ideckia/ideckia)

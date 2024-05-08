@@ -1,4 +1,4 @@
---class-path src/server
+--class-path src/core
 
 --library hxnodejs
 --library ideckia_api
@@ -8,7 +8,7 @@
 --library tink_semver
 --library tink_http
 
--D server
+-D core
 -D analyzer-optimize
 -D js-es=6
 -D no-deprecation-warnings

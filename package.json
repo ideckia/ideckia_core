@@ -8,7 +8,7 @@
 	"author": "Josu Igoa Errandonea",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/ideckia/ideckia-server.git"
+		"url": "git+https://github.com/ideckia/ideckia_core.git"
 	},
 	"dependencies": {
 		"auto-launch": "^5.0.5",

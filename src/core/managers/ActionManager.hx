@@ -5,7 +5,7 @@ import haxe.ds.Option;
 import js.node.Require;
 
 using api.IdeckiaApi;
-using api.internal.ServerApi;
+using api.internal.CoreApi;
 using StringTools;
 
 class ActionManager {
@@ -25,7 +25,7 @@ class ActionManager {
 		return Ideckia.getAppPath(actionsPath);
 	}
 
-	public static function loadAndInitAction(itemId:ItemId, state:ServerState, addToCache:Bool = true):js.lib.Promise<Bool> {
+	public static function loadAndInitAction(itemId:ItemId, state:CoreState, addToCache:Bool = true):js.lib.Promise<Bool> {
 		return new js.lib.Promise<Bool>((resolve, reject) -> {
 			Log.debug('Load actions from item [$itemId] / state [id=${state.id}] [text=${state.text}], [icon=${(state.icon == null) ? null : state.icon.substring(0, 50) + "..."}]');
 			var actions = state.actions;
@@ -41,7 +41,7 @@ class ActionManager {
 				Log.debug('    Loading action [id=${action.id}] [name=${action.name}] [enabled=${action.enabled}]');
 				try {
 					var name = action.name;
-					var idkServer:IdeckiaServer = {
+					var idkCore:IdeckiaCore = {
 						log: {
 							error: actionLog.bind(Log.error, name),
 							debug: actionLog.bind(Log.debug, name),
@@ -77,7 +77,7 @@ class ActionManager {
 					}
 
 					state.textSize = state.textSize == null ? LayoutManager.layout.textSize : state.textSize;
-					ideckiaAction.setup(action.props, idkServer);
+					ideckiaAction.setup(action.props, idkCore);
 					initPromises.push(ideckiaAction.init(state));
 
 					retActions.push({id: action.id, action: ideckiaAction});

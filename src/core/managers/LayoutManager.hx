@@ -6,7 +6,7 @@ import tink.Json.parse as tinkJsonParse;
 import tink.Json.stringify as tinkJsonStringify;
 
 using api.IdeckiaApi;
-using api.internal.ServerApi;
+using api.internal.CoreApi;
 using StringTools;
 
 class LayoutManager {
@@ -77,7 +77,7 @@ class LayoutManager {
 		return [for (i in currentDir.items) i];
 	}
 
-	static function hideState(state:ServerState) {
+	static function hideState(state:CoreState) {
 		switch ActionManager.getActionsByStateId(state.id) {
 			case Some(actions):
 				for (action in actions) {
@@ -90,7 +90,7 @@ class LayoutManager {
 		}
 	}
 
-	static function showState(state:ServerState):js.lib.Promise<Bool> {
+	static function showState(state:CoreState):js.lib.Promise<Bool> {
 		return new js.lib.Promise((resolve, reject) -> {
 			var promises = [];
 			switch ActionManager.getActionsByStateId(state.id) {
@@ -225,10 +225,10 @@ class LayoutManager {
 		throw new ItemNotFoundException('Could not find [$itemId] item');
 	}
 
-	public static function getItemNextState(itemId:ItemId, advanceMultiState:Bool = false):{state:ServerState, hasMultiStateChanged:Bool} {
+	public static function getItemNextState(itemId:ItemId, advanceMultiState:Bool = false):{state:CoreState, hasMultiStateChanged:Bool} {
 		var item = getItem(itemId);
 
-		var ret:{state:ServerState, hasMultiStateChanged:Bool} = switch item.kind {
+		var ret:{state:CoreState, hasMultiStateChanged:Bool} = switch item.kind {
 			case null:
 				{state: {}, hasMultiStateChanged: false};
 			case ChangeDir(_, state):
@@ -263,7 +263,7 @@ class LayoutManager {
 		return None;
 	}
 
-	public static inline function currentDirForClient():ServerMsg<ClientLayout> {
+	public static inline function currentDirForClient():CoreMsg<ClientLayout> {
 		Log.debug('Sending current directory to client.');
 
 		var icons = new haxe.DynamicAccess<String>();
@@ -288,10 +288,10 @@ class LayoutManager {
 		var rows = currentDir.rows == null ? layout.rows : currentDir.rows;
 		var columns = currentDir.columns == null ? layout.columns : currentDir.columns;
 
-		function transformItem(item:ServerItem) {
+		function transformItem(item:CoreItem) {
 			var currentState = getItemNextState(item.id).state;
 
-			// from ServerState to ClientItem
+			// from CoreState to ClientItem
 			var clientItem:ClientItem = {id: item.id.toUInt()};
 
 			if (currentState != null) {
@@ -307,7 +307,7 @@ class LayoutManager {
 		}
 
 		return {
-			type: ServerMsgType.layout,
+			type: CoreMsgType.layout,
 			data: {
 				rows: rows,
 				columns: columns,
@@ -328,7 +328,7 @@ class LayoutManager {
 				if (d.name == newDirName)
 					layout.dirs.splice(index, 1);
 
-			var serverItems = [];
+			var coreItems = [];
 			var initPromises = [];
 			var sItem, sState, actions;
 			for (i in dynamicDir.items) {
@@ -358,14 +358,14 @@ class LayoutManager {
 					sItem = {id: ItemId.next(), kind: Kind.States(0, [sState])};
 					initPromises.push(ActionManager.loadAndInitAction(sItem.id, sState));
 				}
-				serverItems.push(sItem);
+				coreItems.push(sItem);
 			};
 			layout.dirs.push({
 				name: newDirName,
 				rows: dynamicDir.rows,
 				bgColor: dynamicDir.bgColor,
 				columns: dynamicDir.columns,
-				items: serverItems
+				items: coreItems
 			});
 
 			initPromises.push(changeDir(newDirName));
@@ -507,7 +507,7 @@ class LayoutManager {
 		});
 	}
 
-	static function setItemAndStateIds(items:Array<ServerItem>, toNull:Bool = false) {
+	static function setItemAndStateIds(items:Array<CoreItem>, toNull:Bool = false) {
 		for (i in items) {
 			i.id = toNull ? null : ItemId.next();
 			i.kind = switch i.kind {
@@ -524,7 +524,7 @@ class LayoutManager {
 		}
 	}
 
-	static function setActionIds(items:Array<ServerItem>, toNull:Bool = false) {
+	static function setActionIds(items:Array<CoreItem>, toNull:Bool = false) {
 		var id = 0;
 		for (i in items)
 			i.kind = switch i.kind {
@@ -541,7 +541,7 @@ class LayoutManager {
 			}
 	}
 
-	static function removeDefaults(items:Array<ServerItem>) {
+	static function removeDefaults(items:Array<CoreItem>) {
 		var defaultTextSize = layout.textSize;
 		for (i in items)
 			i.kind = switch i.kind {

@@ -31,8 +31,8 @@ jobs:
         lix install haxe ${{ env.HAXE_VERSION }}
         lix download
 
-    - name: Compile server
-      run: haxe deploy_server.hxml
+    - name: Compile core
+      run: haxe deploy_core.hxml
 
     - name: Compile editor
       run: haxe deploy_editor.hxml

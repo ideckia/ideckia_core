@@ -17,7 +17,7 @@
 	},
 	{
 		"id": "title_client_check",
-		"text": "If activated, clicked states will be executed in the server."
+		"text": "If activated, clicked states will be executed in the core."
 	},
 	{
 		"id": "label_client_check",
@@ -68,7 +68,7 @@
 		"text": "Update layout"
 	},
 	{
-		"id": "server_layout_updated",
+		"id": "core_layout_updated",
 		"text": "Layout updated!"
 	},
 	{

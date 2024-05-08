@@ -2,8 +2,8 @@ package websocket;
 
 import js.node.fs.ReadStream;
 import js.node.Fs;
-import api.internal.ServerApi.StateId;
-import api.internal.ServerApi.ActionId;
+import api.internal.CoreApi.StateId;
+import api.internal.CoreApi.ActionId;
 import managers.ActionManager;
 import managers.LayoutManager;
 import websocket.WebSocketConnection.WebSocketConnectionJs;
@@ -29,7 +29,7 @@ class WebSocketServer {
 	var ws:WebSocketServerJs;
 
 	public function new() {
-		var server = js.node.Http.createServer(function(request, response) {
+		var core = js.node.Http.createServer(function(request, response) {
 			handleRequest(request).then(res -> {
 				response.writeHead(res.code, res.headers);
 				if (res.readStream != null)
@@ -39,7 +39,7 @@ class WebSocketServer {
 			});
 		});
 
-		server.listen(port, () -> {
+		core.listen(port, () -> {
 			var banner = haxe.Resource.getString('banner');
 			banner = banner.replace('::version::', Ideckia.CURRENT_VERSION);
 			banner = banner.replace('::buildDate::', Macros.buildDate().toString());
@@ -48,7 +48,7 @@ class WebSocketServer {
 		});
 
 		ws = new WebSocketServerJs({
-			server: server
+			core: core
 		});
 
 		ws.on('connection', function(connectionjs:WebSocketConnectionJs) {

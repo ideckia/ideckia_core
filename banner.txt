@@ -7,4 +7,4 @@
 
 Version: ::version::
 Built on: ::buildDate::
-Server running at ::address::
+Core running at ::address::

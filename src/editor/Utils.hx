@@ -1,5 +1,5 @@
 import hx.Selectors.IdSel;
-import api.internal.ServerApi;
+import api.internal.CoreApi;
 import hx.Selectors.Cls;
 import hx.Selectors.Id;
 import js.html.Element;
@@ -103,7 +103,7 @@ class Utils {
 		return None;
 	}
 
-	public static function createNewState():ServerState {
+	public static function createNewState():CoreState {
 		return {
 			id: getNextStateId(),
 			text: ''
@@ -126,7 +126,7 @@ class Utils {
 		return text;
 	}
 
-	public static function createNewItem():js.lib.Promise<ServerItem> {
+	public static function createNewItem():js.lib.Promise<CoreItem> {
 		Id.item_kind_changedir_radio.as(InputElement).checked = false;
 		Id.item_kind_states_radio.as(InputElement).checked = false;
 		return new js.lib.Promise((resolveNewItem, _) -> Dialog.show('::show_title_new_item_kind::', Id.new_item_kind.get(), () -> {
@@ -134,7 +134,7 @@ class Utils {
 				var isChangedir = Id.item_kind_changedir_radio.as(InputElement).checked;
 				var state = createNewState();
 
-				var item:ServerItem = {
+				var item:CoreItem = {
 					id: Utils.getNextItemId(),
 					kind: if (isChangedir) {
 						ChangeDir(App.editorData.layout.dirs[0].name, state);

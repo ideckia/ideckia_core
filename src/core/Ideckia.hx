@@ -3,7 +3,7 @@ package;
 import appropos.Appropos;
 import managers.UpdateManager;
 import websocket.WebSocketServer;
-import api.internal.ServerApi;
+import api.internal.CoreApi;
 import managers.ActionManager;
 import managers.LayoutManager;
 import managers.MsgManager;
@@ -145,7 +145,7 @@ class Ideckia {
 	static function main() {
 		Appropos.init(getApproposPath());
 		Log.init();
-		UpdateManager.checkServerRelease();
+		UpdateManager.checkCoreRelease();
 		new Ideckia();
 	}
 

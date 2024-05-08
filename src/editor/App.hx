@@ -1,6 +1,6 @@
 package;
 
-import api.internal.ServerApi;
+import api.internal.CoreApi;
 import js.Browser.document;
 import js.html.*;
 
@@ -21,9 +21,9 @@ class App {
 	public static function set_dirtyData(dd:Bool) {
 		dirtyData = dd;
 		if (dd)
-			Id.update_server_layout_btn.get().classList.remove(Cls.hidden);
+			Id.update_core_layout_btn.get().classList.remove(Cls.hidden);
 		else
-			Id.update_server_layout_btn.get().classList.add(Cls.hidden);
+			Id.update_core_layout_btn.get().classList.add(Cls.hidden);
 		return dd;
 	}
 
@@ -32,7 +32,7 @@ class App {
 	}
 
 	function onLoad() {
-		initWebsocketServer();
+		initWebsocketCore();
 
 		js.Browser.window.addEventListener('beforeunload', (e:Event) -> {
 			if (dirtyData) {
@@ -515,7 +515,7 @@ class App {
 			};
 			http.request();
 		});
-		Id.update_server_layout_btn.get().addEventListener('click', (_) -> {
+		Id.update_core_layout_btn.get().addEventListener('click', (_) -> {
 			var rows, columns, maxLength;
 
 			for (dir in editorData.layout.dirs) {
@@ -636,7 +636,7 @@ class App {
 		icons.insert(0, {name: '', base64: ''});
 	}
 
-	static function initWebsocketServer() {
+	static function initWebsocketCore() {
 		final port = js.Browser.location.port;
 		websocket = new js.html.WebSocket('ws://127.0.0.1:${port}');
 
@@ -649,10 +649,10 @@ class App {
 		};
 
 		websocket.onmessage = (event:{data:Any}) -> {
-			var serverData:ServerMsg<Any> = haxe.Json.parse(event.data);
-			switch serverData.type {
-				case ServerMsgType.editorData:
-					editorData = serverData.data;
+			var coreData:CoreMsg<Any> = haxe.Json.parse(event.data);
+			switch coreData.type {
+				case CoreMsgType.editorData:
+					editorData = coreData.data;
 
 					updateSharedValues();
 
@@ -669,7 +669,7 @@ class App {
 					FixedEditor.show();
 
 				case _:
-					trace('Unhandled message from server [${haxe.Json.stringify(event)}]');
+					trace('Unhandled message from core [${haxe.Json.stringify(event)}]');
 			};
 		}
 
