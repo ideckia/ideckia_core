@@ -40,9 +40,14 @@ class LayoutManager {
 		} catch (e:haxe.Exception) {
 			Log.raw(e.stack);
 			layout = {
-				rows: 0,
-				columns: 0,
-				dirs: [],
+				rows: 1,
+				columns: 2,
+				dirs: [
+					{
+						name: new DirName(MAIN_DIR_ID),
+						items: [{}, {}]
+					}
+				],
 				fixedItems: [],
 				sharedVars: [],
 				icons: []
