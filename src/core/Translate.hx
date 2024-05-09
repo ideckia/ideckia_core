@@ -3,7 +3,7 @@ import api.action.Data;
 
 using StringTools;
 
-class Lang {
+class Translate {
 	static inline var LOCALIZATIONS_DIR = '/lang';
 
 	static var translations:Translations;

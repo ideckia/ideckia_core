@@ -50,7 +50,7 @@ class ActionManager {
 						dialog: Ideckia.dialog,
 						mediaPlayer: Ideckia.mediaPlayer,
 						updateClientState: ClientManager.fromActionToClient.bind(itemId, name),
-						getCurrentLang: Lang.getCurrentLang
+						getCurrentLang: Translate.getCurrentLang
 					};
 					if (!action.enabled) {
 						continue;

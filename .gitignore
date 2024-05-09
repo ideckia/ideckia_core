@@ -8,4 +8,4 @@ layout.json
 app.props
 gen.readme.md
 bin/editor/app.js
-test_server/*
+test_core/*
