@@ -336,6 +336,14 @@
 		"text": "[{0}] translation file copied successfully. Rename the file with your language code and start translating."
 	},
 	{
+		"id": "alert_translation_create_error",
+		"text": "An error ocurred copying translation file: {0}"
+	},
+	{
+		"id": "alert_get_descriptors_error",
+		"text": "An error ocurred getting the action descriptors: {0}"
+	},
+	{
 		"id": "alert_getting_state_action_statuses",
 		"text": "Error getting action statuses of [id={0}]: {1}"
 	},

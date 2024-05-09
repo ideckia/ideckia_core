@@ -545,11 +545,26 @@ class App {
 			final port = js.Browser.location.port;
 			var http = new haxe.Http('http://localhost:$port$newTranslationEndpoint');
 			http.onError = (e) -> {
-				var msg = 'Error creating translation: $e';
-				js.Browser.alert(msg);
+				js.Browser.alert(Utils.formatString('::alert_translation_create_error::', [e]));
 			};
 			http.onData = (d) -> {
 				js.Browser.alert(Utils.formatString('::alert_translation_create_ok::', [d]));
+			};
+			http.request();
+		});
+	}
+
+	public static function updateActionDescriptors() {
+		return new js.lib.Promise((resolve, reject) -> {
+			final port = js.Browser.location.port;
+			var http = new haxe.Http('http://localhost:$port$actionDescriptorsEndpoint');
+			http.onError = (e) -> {
+				js.Browser.alert(Utils.formatString('::alert_get_descriptors_error::', [e]));
+				reject(e);
+			};
+			http.onData = (d) -> {
+				App.editorData.actionDescriptors = haxe.Json.parse(d);
+				resolve(true);
 			};
 			http.request();
 		});
@@ -668,8 +683,17 @@ class App {
 					updateDirsSelect();
 					FixedEditor.show();
 
+				case CoreMsgType.layout:
+					if (!App.dirtyData) {
+						var msg:EditorMsg = {
+							type: EditorMsgType.getEditorData,
+							whoami: editor
+						};
+						websocket.send(haxe.Json.stringify(msg));
+					}
+
 				case _:
-					trace('Unhandled message from core [${haxe.Json.stringify(event)}]');
+					trace('Unhandled message [${coreData.type}] from core [${haxe.Json.stringify(event)}]');
 			};
 		}
 

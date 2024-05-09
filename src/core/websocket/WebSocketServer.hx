@@ -118,7 +118,7 @@ class WebSocketServer {
 						resolve({
 							code: 200,
 							headers: headers,
-							body: Lang.localizeAll(sys.io.File.getContent(absolutePath))
+							body: Translate.localizeAll(sys.io.File.getContent(absolutePath))
 						});
 					} else {
 						resolve({
@@ -154,11 +154,19 @@ class WebSocketServer {
 						headers: headers,
 						body: haxe.Json.stringify(ActionManager.getActionTemplates())
 					});
+				} else if (request.method == 'GET' && requestUrl == actionDescriptorsEndpoint) {
+					ActionManager.getEditorActionDescriptors().then(actionDescriptors -> {
+						resolve({
+							code: 200,
+							headers: headers,
+							body: haxe.Json.stringify(actionDescriptors)
+						});
+					});
 				} else if (request.method == 'GET' && requestUrl == newTranslationEndpoint) {
 					resolve({
 						code: 200,
 						headers: headers,
-						body: Lang.newTranslation()
+						body: Translate.newTranslation()
 					});
 				} else if (request.method == 'GET' && requestUrl.startsWith('/action')) {
 					if (ACTION_ID_DESCRIPTOR.match(requestUrl)) {

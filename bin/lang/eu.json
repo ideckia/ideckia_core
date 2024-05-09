@@ -336,6 +336,14 @@
 		"text": "[{0}] itzulpen fitxategia ongi kopiatu da. Berrizendatu fitxategia zure hizkuntzaren kodearekin eta hasi itzultzen."
 	},
 	{
+		"id": "alert_translation_create_error",
+		"text": "Errore bat gertatu da itzulpen fitxategia kopiatzerakoan: {0}"
+	},
+	{
+		"id": "alert_get_descriptors_error",
+		"text": "Errore bat gertatu da ekintzen deskribatzaileak lortzerakoan: {0}"
+	},
+	{
 		"id": "alert_getting_state_action_statuses",
 		"text": "Errorea [id={0}] egoeraren ekintzen egoera kargatzean: {1}"
 	},

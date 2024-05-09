@@ -79,96 +79,98 @@ class StateEditor {
 				v.addEventListener('click', (event) -> {
 					Utils.stopPropagation(event);
 
-					var actionDescriptors = App.editorData.actionDescriptors;
-					Id.new_action_description.get().textContent = null;
-					var emptyOption = [{value: 0, text: ''}];
-					Utils.fillSelectElement(Id.actions_select.as(SelectElement), emptyOption.concat([
-						for (i in 0...actionDescriptors.length)
-							{value: i, text: actionDescriptors[i].name}
-					]));
-					Utils.clearElement(Id.action_presets.get());
-					var selListener = [];
-					Utils.addListener(selListener, Id.actions_select.get(), 'change', (_) -> {
-						var selectedActionIndex = Id.actions_select.as(SelectElement).selectedIndex;
-						if (selectedActionIndex == 0)
-							return;
-						var actionDescriptor = actionDescriptors[selectedActionIndex - 1];
-						var actionPresets = actionDescriptor.presets;
-						Id.new_action_description.get().textContent = actionDescriptor.description;
-						if (actionPresets != null) {
-							Utils.fillSelectElement(Id.action_presets.as(SelectElement),
-								emptyOption.concat([for (i in 0...actionPresets.length) {value: i + 1, text: actionPresets[i].name}]));
-						}
-					});
-					Dialog.show('::show_title_new_action::', Id.new_action.get(), () -> {
-						return new js.lib.Promise((resolve, reject) -> {
+					App.updateActionDescriptors().then(_ -> {
+						var actionDescriptors = App.editorData.actionDescriptors;
+						Id.new_action_description.get().textContent = null;
+						var emptyOption = [{value: 0, text: ''}];
+						Utils.fillSelectElement(Id.actions_select.as(SelectElement), emptyOption.concat([
+							for (i in 0...actionDescriptors.length)
+								{value: i, text: actionDescriptors[i].name}
+						]));
+						Utils.clearElement(Id.action_presets.get());
+						var selListener = [];
+						Utils.addListener(selListener, Id.actions_select.get(), 'change', (_) -> {
 							var selectedActionIndex = Id.actions_select.as(SelectElement).selectedIndex;
-							if (selectedActionIndex == 0) {
-								resolve(false);
+							if (selectedActionIndex == 0)
 								return;
-							}
-
 							var actionDescriptor = actionDescriptors[selectedActionIndex - 1];
-							var actionName = actionDescriptor.name;
-
-							function createAction(props:Any) {
-								if (state.actions == null) {
-									state.actions = [];
-								}
-
-								var action = {
-									name: actionName,
-									enabled: true,
-									props: props
-								};
-								state.actions.push(action);
-
-								Utils.removeListeners(selListener);
-
-								App.dirtyData = true;
-								DirEditor.refresh();
-								ItemEditor.refresh();
-								FixedEditor.show();
-								ActionEditor.edit(action);
-								resolve(true);
-							}
-
 							var actionPresets = actionDescriptor.presets;
+							Id.new_action_description.get().textContent = actionDescriptor.description;
 							if (actionPresets != null) {
-								var selectedPresetIndex = Id.action_presets.as(SelectElement).selectedIndex;
-								if (selectedPresetIndex != 0) {
-									var preset = actionPresets[selectedPresetIndex - 1];
-									var actionProps = preset.props;
-									if (actionProps == null) {
-										js.Browser.alert(Utils.formatString('::alert_preset_missing_mandatory_prop::', [preset.name]));
-										resolve(false);
-										return;
-									}
-
-									PresetEditor.edit(actionName, preset).then(newProps -> {
-										createAction(newProps);
-									}).catchError(e -> trace(e));
+								Utils.fillSelectElement(Id.action_presets.as(SelectElement),
+									emptyOption.concat([for (i in 0...actionPresets.length) {value: i + 1, text: actionPresets[i].name}]));
+							}
+						});
+						Dialog.show('::show_title_new_action::', Id.new_action.get(), () -> {
+							return new js.lib.Promise((resolve, reject) -> {
+								var selectedActionIndex = Id.actions_select.as(SelectElement).selectedIndex;
+								if (selectedActionIndex == 0) {
+									resolve(false);
 									return;
 								}
-							}
 
-							var actionDefaultProps = {};
-							var defValue;
-							if (actionDescriptor.props != null) {
-								for (p in actionDescriptor.props) {
-									defValue = (p.defaultValue == null) ? null : p.defaultValue.replace('"', '').replace("'", '');
-									if (p.type != null && p.type.contains('Bool'))
-										Reflect.setField(actionDefaultProps, p.name, defValue == 'true');
-									else
-										Reflect.setField(actionDefaultProps, p.name, defValue);
+								var actionDescriptor = actionDescriptors[selectedActionIndex - 1];
+								var actionName = actionDescriptor.name;
+
+								function addAction(props:Any) {
+									if (state.actions == null) {
+										state.actions = [];
+									}
+
+									var action = {
+										name: actionName,
+										enabled: true,
+										props: props
+									};
+									state.actions.push(action);
+
+									Utils.removeListeners(selListener);
+
+									App.dirtyData = true;
+									DirEditor.refresh();
+									ItemEditor.refresh();
+									FixedEditor.show();
+									ActionEditor.edit(action);
+									resolve(true);
 								}
-							}
 
-							createAction(actionDefaultProps);
+								var actionPresets = actionDescriptor.presets;
+								if (actionPresets != null) {
+									var selectedPresetIndex = Id.action_presets.as(SelectElement).selectedIndex;
+									if (selectedPresetIndex != 0) {
+										var preset = actionPresets[selectedPresetIndex - 1];
+										var actionProps = preset.props;
+										if (actionProps == null) {
+											js.Browser.alert(Utils.formatString('::alert_preset_missing_mandatory_prop::', [preset.name]));
+											resolve(false);
+											return;
+										}
+
+										PresetEditor.edit(actionName, preset).then(newProps -> {
+											addAction(newProps);
+										}).catchError(e -> trace(e));
+										return;
+									}
+								}
+
+								var actionDefaultProps = {};
+								var defValue;
+								if (actionDescriptor.props != null) {
+									for (p in actionDescriptor.props) {
+										defValue = (p.defaultValue == null) ? null : p.defaultValue.replace('"', '').replace("'", '');
+										if (p.type != null && p.type.contains('Bool'))
+											Reflect.setField(actionDefaultProps, p.name, defValue == 'true');
+										else
+											Reflect.setField(actionDefaultProps, p.name, defValue);
+									}
+								}
+
+								addAction(actionDefaultProps);
+							});
+						}, () -> {
+							Utils.removeListeners(selListener);
 						});
-					}, () -> {
-						Utils.removeListeners(selListener);
-					});
+					}).catchError(error -> trace(error));
 				});
 			case None:
 				trace('No [${Cls.add_action_btn.selector()}] found in [${Id.state_list_item_tpl.selector()}]');
