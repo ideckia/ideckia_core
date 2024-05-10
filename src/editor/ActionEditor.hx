@@ -268,6 +268,9 @@ class ActionEditor {
 	}
 
 	static function createFromDescriptor(actionDescriptor:ActionDescriptor) {
+		if (actionDescriptor.props == null)
+			return [];
+
 		var div:DivElement,
 			nameSpan:SpanElement,
 			valueInput:InputElement,
@@ -330,10 +333,10 @@ class ActionEditor {
 				}
 			}
 			nameSpan.innerText = prop.name;
-			var tooltipText = 'Property name : ${prop.name}\n';
-			tooltipText += 'Type : ${prop.type}\n';
-			tooltipText += 'Default value : ${prop.defaultValue}\n';
-			tooltipText += 'Description : ${prop.description}\n';
+			var tooltipText = Utils.formatString('::action_tooltip_name::', [prop.name]) + '\n';
+			tooltipText += Utils.formatString('::action_tooltip_type::', [prop.type]) + '\n';
+			tooltipText += Utils.formatString('::action_tooltip_default_value::', [prop.defaultValue]) + '\n';
+			tooltipText += Utils.formatString('::action_tooltip_description::', [prop.description]) + '\n';
 			nameSpan.title = tooltipText;
 			divs.push(div);
 			Id.action_props.as(DivElement).appendChild(div);

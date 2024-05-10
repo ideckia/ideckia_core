@@ -442,5 +442,21 @@
 	{
 		"id": "tray_quit",
 		"text": "quit"
+	},
+	{
+		"id": "action_tooltip_name",
+		"text": "Property name : {0}"
+	},
+	{
+		"id": "action_tooltip_type",
+		"text": "Type : {0}"
+	},
+	{
+		"id": "action_tooltip_default_value",
+		"text": "Default value : {0}"
+	},
+	{
+		"id": "action_tooltip_description",
+		"text": "Description : {0}"
 	}
 ]
