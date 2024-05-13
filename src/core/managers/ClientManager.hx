@@ -118,7 +118,10 @@ class ClientManager {
 								return js.lib.Promise.resolve(new ActionOutcome({state: currentState}));
 							}).catchError(e -> {
 								Log.error('Error running action.');
-								Log.raw(e.stack);
+								if (e.stack != null)
+									Log.raw(e.stack);
+								else
+									Log.raw(e);
 								return execAction(currentState);
 							});
 						},

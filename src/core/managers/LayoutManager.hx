@@ -38,7 +38,10 @@ class LayoutManager {
 		try {
 			layout = tinkJsonParse(sys.io.File.getContent(layoutFullPath));
 		} catch (e:haxe.Exception) {
-			Log.raw(e.stack);
+			if (e.stack != null)
+				Log.raw(e.stack);
+			else
+				Log.raw(e);
 			layout = {
 				rows: 1,
 				columns: 2,

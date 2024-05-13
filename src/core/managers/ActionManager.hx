@@ -83,7 +83,10 @@ class ActionManager {
 					retActions.push({id: action.id, action: ideckiaAction});
 				} catch (e:haxe.Exception) {
 					Log.error('Error creating [${action.name}] action: ${e.message}');
-					Log.raw(e.stack);
+					if (e.stack != null)
+						Log.raw(e.stack);
+					else
+						Log.raw(e);
 				}
 			}
 
@@ -199,7 +202,10 @@ class ActionManager {
 				} catch (e:haxe.Exception) {
 					Ideckia.dialog.error('No description found', 'Error reading descriptor of the action [$c].');
 					Log.error('Error reading descriptor of the action [$c]: ${e.message}');
-					Log.raw(e.stack);
+					if (e.stack != null)
+						Log.raw(e.stack);
+					else
+						Log.raw(e);
 				}
 			}
 

@@ -49,13 +49,19 @@ class Ideckia {
 		}
 		UpdateManager.checkUpdates(appPath, 'media');
 
-		js.Node.process.on('uncaughtException', (error) -> {
+		js.Node.process.on('uncaughtException', (e) -> {
 			Log.error('There was an uncaughtException.');
-			Log.raw(error.stack);
+			if (e.stack != null)
+				Log.raw(e.stack);
+			else
+				Log.raw(e);
 		});
-		js.Node.process.on('unhandledRejection', (error, promise) -> {
+		js.Node.process.on('unhandledRejection', (e, promise) -> {
 			Log.error('Rejection was not handled in the promise [$promise]');
-			Log.raw(error.stack);
+			if (e.stack != null)
+				Log.raw(e.stack);
+			else
+				Log.raw(e);
 		});
 
 		var autoLauncher = new AutoLaunch({
