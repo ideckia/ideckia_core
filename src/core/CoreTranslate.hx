@@ -1,9 +1,9 @@
 import api.IdeckiaApi.Translations;
-import api.action.Data;
+import api.data.Data;
 
 using StringTools;
 
-class Translate {
+class CoreTranslate {
 	static inline var LOCALIZATIONS_DIR = '/lang';
 
 	static var translations:Translations;
@@ -15,14 +15,14 @@ class Translate {
 	static var currentLang:String;
 
 	static public function init() {
-		translations = Data.getTranslations(LOCALIZATIONS_DIR);
+		translations = Data.getTranslations(LOCALIZATIONS_DIR, true);
 		loadFromDisk();
 	}
 
 	static function loadFromDisk() {
 		var absolutePath = Ideckia.getAppPath(LOCALIZATIONS_DIR);
 		if (sys.FileSystem.exists(absolutePath)) {
-			translations.merge(Data.getTranslationsAbsolute(LOCALIZATIONS_DIR));
+			translations.merge(Data.getTranslations(LOCALIZATIONS_DIR));
 			watchForChanges();
 		}
 	}

@@ -118,7 +118,7 @@ class WebSocketServer {
 						resolve({
 							code: 200,
 							headers: headers,
-							body: Translate.localizeAll(sys.io.File.getContent(absolutePath))
+							body: CoreTranslate.localizeAll(sys.io.File.getContent(absolutePath))
 						});
 					} else {
 						resolve({
@@ -166,7 +166,7 @@ class WebSocketServer {
 					resolve({
 						code: 200,
 						headers: headers,
-						body: Translate.newTranslation()
+						body: CoreTranslate.newTranslation()
 					});
 				} else if (request.method == 'GET' && requestUrl.startsWith('/action')) {
 					if (ACTION_ID_DESCRIPTOR.match(requestUrl)) {
