@@ -15,7 +15,7 @@ class CoreTranslate {
 	static var currentLang:String;
 
 	static public function init() {
-		translations = Data.getTranslations(LOCALIZATIONS_DIR, true);
+		translations = Data.getTranslations(haxe.io.Path.join([js.Node.__dirname, LOCALIZATIONS_DIR]));
 		loadFromDisk();
 	}
 

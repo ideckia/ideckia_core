@@ -5,6 +5,7 @@
 -lib tink_json
 
 -D core
+-D editor
 -D indexPath=bin/editor/index.html,bin/editor/style.css
 -D no-deprecation-warnings
 -D analyzer-optimize

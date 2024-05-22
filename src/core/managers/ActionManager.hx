@@ -39,22 +39,11 @@ class ActionManager {
 			var actionsBasePath = getActionsPath();
 			for (action in actions) {
 				Log.debug('    Loading action [id=${action.id}] [name=${action.name}] [enabled=${action.enabled}]');
+				if (!action.enabled) {
+					continue;
+				}
 				try {
 					var name = action.name;
-					var idkCore:IdeckiaCore = {
-						log: {
-							error: actionLog.bind(Log.error, name),
-							debug: actionLog.bind(Log.debug, name),
-							info: actionLog.bind(Log.info, name)
-						},
-						dialog: Ideckia.dialog,
-						mediaPlayer: Ideckia.mediaPlayer,
-						updateClientState: ClientManager.fromActionToClient.bind(itemId, name),
-						getCurrentLang: Translate.getCurrentLang
-					};
-					if (!action.enabled) {
-						continue;
-					}
 					var actionPath = actionsBasePath + '/$name';
 					UpdateManager.checkUpdates(actionsBasePath, name);
 					var ideckiaAction:IdeckiaAction = requireAction(actionPath);
@@ -77,7 +66,7 @@ class ActionManager {
 					}
 
 					state.textSize = state.textSize == null ? LayoutManager.layout.textSize : state.textSize;
-					ideckiaAction.setup(action.props, idkCore);
+					ideckiaAction.setup(action.props, getIdeckiaCoreForAction(itemId, name));
 					initPromises.push(ideckiaAction.init(state));
 
 					retActions.push({id: action.id, action: ideckiaAction});
@@ -156,7 +145,8 @@ class ActionManager {
 			if (module == null || !haxe.io.Path.normalize(module.id.toLowerCase()).startsWith(normalizedActionsPath))
 				continue;
 			if (module.id.endsWith('.js')) {
-				Log.debug('Unloading [${module.id}]');
+				var actionName = haxe.io.Path.normalize(module.id.toLowerCase()).replace(normalizedActionsPath, '').split('/')[1];
+				Log.debug('Unloading [action=$actionName] / [${module.id}]');
 				Require.cache.remove(module.id);
 			}
 		}
@@ -198,6 +188,7 @@ class ActionManager {
 
 				action = requireAction('$actionPath/$c');
 				try {
+					action.setup({}, getIdeckiaCoreForAction(null, c));
 					descriptorPromises.push(action.getActionDescriptor());
 				} catch (e:haxe.Exception) {
 					Ideckia.dialog.error('No description found', 'Error reading descriptor of the action [$c].');
@@ -327,6 +318,27 @@ class ActionManager {
 					templates.push({tplName: tpl, tplDirectory: tplDirectory});
 				}
 		return templates;
+	}
+
+	static function getIdeckiaCoreForAction(itemId:ItemId, name:String):IdeckiaCore {
+		return {
+			log: {
+				error: actionLog.bind(Log.error, name),
+				debug: actionLog.bind(Log.debug, name),
+				info: actionLog.bind(Log.info, name)
+			},
+			dialog: Ideckia.dialog,
+			mediaPlayer: Ideckia.mediaPlayer,
+			updateClientState: itemId == null ? null : ClientManager.fromActionToClient.bind(itemId, name),
+			data: {
+				getCurrentLang: CoreTranslate.getCurrentLang,
+				getContent: Data.getContent,
+				getJson: Data.getJson,
+				getTranslations: Data.getTranslations,
+				getBytes: Data.getBytes,
+				getBase64: Data.getBase64
+			}
+		};
 	}
 
 	static function requireAction(actionPath:String) {
