@@ -233,6 +233,9 @@ class Batch {
 	}
 
 	static function copyToIdeckia(actionName:String) {
+		if (!sys.FileSystem.exists('index.js'))
+			return;
+
 		var indexContent = sys.io.File.getContent('index.js');
 		var actionDir = actionName.replace('action_', '');
 		try {
