@@ -70,8 +70,9 @@ class ClientManager {
 								MsgManager.sendToAll(LayoutManager.currentDirForClient());
 						};
 						var promiseError = (error) -> {
-							Log.error('Error executing actions of the state [${currentState.id}]. [${Std.string(error)}]');
-							Ideckia.dialog.error('Error executing actions of the state [${currentState.id}]', Std.string(error));
+							var errString:String = StringTools.replace(Std.string(error), '"', '\\"');
+							Log.error('Error executing actions of the state [${currentState.id}]. [$errString]');
+							Ideckia.dialog.error('Error executing actions of the state [${currentState.id}]', errString);
 						};
 
 						var prevAction:IdeckiaAction = null;
@@ -81,10 +82,14 @@ class ClientManager {
 								if (isLongPress) {
 									if (newState.extraData != null && prevAction != null) {
 										return new js.lib.Promise<ActionOutcome>((resolve, reject) -> {
+											var adName = '';
 											prevAction.getActionDescriptor()
-												.then(ad -> newState.extraData.fromAction = ad.name)
+												.then(ad -> {
+													adName = ad.name;
+													newState.extraData.fromAction = adName;
+												})
 												.catchError(e -> Log.error('getActionDescriptor() error: $e'))
-												.finally(() -> action.onLongPress(newState).then(resolve).catchError(reject));
+												.finally(() -> action.onLongPress(newState).then(resolve).catchError(e -> reject('[${adName}] $e')));
 										});
 									} else {
 										prevAction = action;
@@ -97,10 +102,14 @@ class ClientManager {
 								} else {
 									if (newState.extraData != null && prevAction != null) {
 										return new js.lib.Promise<ActionOutcome>((resolve, reject) -> {
+											var adName = '';
 											prevAction.getActionDescriptor()
-												.then(ad -> newState.extraData.fromAction = ad.name)
+												.then(ad -> {
+													adName = ad.name;
+													newState.extraData.fromAction = adName;
+												})
 												.catchError(e -> Log.error('getActionDescriptor() error: $e'))
-												.finally(() -> action.execute(newState).then(resolve).catchError(reject));
+												.finally(() -> action.execute(newState).then(resolve).catchError(e -> reject('[${adName}] $e')));
 										});
 									} else {
 										prevAction = action;

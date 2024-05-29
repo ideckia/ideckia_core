@@ -79,7 +79,7 @@ class UpdateManager {
 					sys.io.File.saveBytes(savePath, bytes);
 					Ideckia.dialog.info('New version of ideckia_core downloaded', 'Please quit Ideckia and override the executable with [$savePath].');
 				} catch (e:haxe.Exception) {
-					var msg = 'Error saving [ideckia_core] update: ${e.message}';
+					var msg = 'Error saving [ideckia_core] update: ${e.message.replace('"', '\\"')}';
 					Ideckia.dialog.error('Error when updating', msg);
 					Log.error(msg);
 					if (e.stack != null)
@@ -97,7 +97,7 @@ class UpdateManager {
 				try {
 					unzip(bytes, path);
 				} catch (e:haxe.Exception) {
-					var msg = 'Error unzipping [$moduleName] update: ${e.message}';
+					var msg = 'Error unzipping [$moduleName] update: ${e.message.replace('"', '\\"')}';
 					Ideckia.dialog.error('Error when updating', msg);
 					Log.error(e);
 				}
