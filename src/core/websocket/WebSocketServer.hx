@@ -118,7 +118,7 @@ class WebSocketServer {
 						resolve({
 							code: 200,
 							headers: headers,
-							body: CoreTranslate.localizeAll(sys.io.File.getContent(absolutePath))
+							body: CoreLoc.localizeAll(sys.io.File.getContent(absolutePath))
 						});
 					} else {
 						resolve({
@@ -162,11 +162,11 @@ class WebSocketServer {
 							body: haxe.Json.stringify(actionDescriptors)
 						});
 					});
-				} else if (request.method == 'GET' && requestUrl == newTranslationEndpoint) {
+				} else if (request.method == 'GET' && requestUrl == newLocalizationEndpoint) {
 					resolve({
 						code: 200,
 						headers: headers,
-						body: CoreTranslate.newTranslation()
+						body: CoreLoc.newLocalization()
 					});
 				} else if (request.method == 'GET' && requestUrl.startsWith('/action')) {
 					if (ACTION_ID_DESCRIPTOR.match(requestUrl)) {

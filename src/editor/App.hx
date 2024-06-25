@@ -541,14 +541,14 @@ class App {
 				}, 3000);
 			}, 10);
 		});
-		Id.translate_me_btn.get().addEventListener('click', (_) -> {
+		Id.localize_me_btn.get().addEventListener('click', (_) -> {
 			final port = js.Browser.location.port;
-			var http = new haxe.Http('http://localhost:$port$newTranslationEndpoint');
+			var http = new haxe.Http('http://localhost:$port$newLocalizationEndpoint');
 			http.onError = (e) -> {
-				js.Browser.alert(Utils.formatString('::alert_translation_create_error::', [e]));
+				js.Browser.alert(Utils.formatString('::alert_localizaation_create_error::', [e]));
 			};
 			http.onData = (d) -> {
-				js.Browser.alert(Utils.formatString('::alert_translation_create_ok::', [d]));
+				js.Browser.alert(Utils.formatString('::alert_localizaation_create_ok::', [d]));
 			};
 			http.request();
 		});

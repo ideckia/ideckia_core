@@ -3,10 +3,10 @@ import sys.io.Process;
 using StringTools;
 
 class Batch {
-	static inline var IDECKIA_GIT_BASE = '';
-	static inline var IDECKIA_APP_DIR = '';
-	static inline var GIT_USER = '';
-	static inline var GIT_MAIL = '';
+	static inline var IDECKIA_GIT_BASE = '/home/josu/git/ideckia';
+	static inline var IDECKIA_APP_DIR = '/home/josu/ideckia';
+	static inline var GIT_USER = 'josuigoa';
+	static inline var GIT_MAIL = 'josuigoa@ni.eus';
 
 	static var actions = [];
 
@@ -30,7 +30,7 @@ class Batch {
 			// gitPush(d);
 			// gitPushLastTag(d);
 			// trace(gitNextTag());
-			// copyToIdeckia(d);
+			copyToIdeckia(d);
 			// gitSetUser({name: GIT_USER, mail: GIT_MAIL});
 			// gitGetBranchName(d);
 			// gitRenameMain();
@@ -59,6 +59,9 @@ class Batch {
 
 	static function haxeCompile(deploy:Bool = false) {
 		var filename = deploy ? 'deploy.hxml' : 'build.hxml';
+		if (!sys.FileSystem.exists(filename))
+			return;
+		filename = deploy ? 'deploy_all.hxml' : 'build_all.hxml';
 		if (!sys.FileSystem.exists(filename))
 			return;
 		Sys.command('haxe $filename');
@@ -233,24 +236,42 @@ class Batch {
 	}
 
 	static function copyToIdeckia(actionName:String) {
+		copyIndex(actionName);
+		copyLoc(actionName);
+	}
+
+	static function copyIndex(actionName:String) {
 		if (!sys.FileSystem.exists('index.js'))
 			return;
-
+		else if (sys.FileSystem.exists('move.sh')) {
+			var p = new Process('./move.sh');
+			if (p.exitCode() != 0) {
+				trace('Error moving: ${p.stderr.readAll().toString()}');
+				return;
+			}
+			return;
+		}
 		var indexContent = sys.io.File.getContent('index.js');
 		var actionDir = actionName.replace('action_', '');
 		try {
 			sys.io.File.saveContent('$IDECKIA_APP_DIR/actions/$actionDir/index.js', indexContent);
+		} catch (e:haxe.Exception) {
+			trace(e);
+		}
+	}
 
-			if (!sys.FileSystem.exists('lang/'))
-				return;
+	static function copyLoc(actionName:String) {
+		if (!sys.FileSystem.exists('loc/'))
+			return;
+		var actionDir = actionName.replace('action_', '');
+		try {
+			var enContent = sys.io.File.getContent('loc/en_UK.json');
+			var euContent = sys.io.File.getContent('loc/eu_ES.json');
+			if (!sys.FileSystem.exists('$IDECKIA_APP_DIR/actions/$actionDir/loc/'))
+				sys.FileSystem.createDirectory('$IDECKIA_APP_DIR/actions/$actionDir/loc/');
 
-			var enContent = sys.io.File.getContent('lang/en.json');
-			var euContent = sys.io.File.getContent('lang/eu.json');
-			if (!sys.FileSystem.exists('$IDECKIA_APP_DIR/actions/$actionDir/lang/'))
-				sys.FileSystem.createDirectory('$IDECKIA_APP_DIR/actions/$actionDir/lang/');
-
-			sys.io.File.saveContent('$IDECKIA_APP_DIR/actions/$actionDir/lang/en.json', enContent);
-			sys.io.File.saveContent('$IDECKIA_APP_DIR/actions/$actionDir/lang/eu.json', euContent);
+			sys.io.File.saveContent('$IDECKIA_APP_DIR/actions/$actionDir/loc/en_UK.json', enContent);
+			sys.io.File.saveContent('$IDECKIA_APP_DIR/actions/$actionDir/loc/eu_ES.json', euContent);
 		} catch (e:haxe.Exception) {
 			trace(e);
 		}

@@ -1,28 +1,28 @@
-import api.IdeckiaApi.Translations;
+import api.IdeckiaApi.LocalizedTexts;
 import api.data.Data;
 
 using StringTools;
 
-class CoreTranslate {
-	static inline var LOCALIZATIONS_DIR = '/lang';
+class CoreLoc {
+	static inline var LOCALIZATIONS_DIR = '/loc';
 
-	static var translations:Translations;
+	static var locTexts:LocalizedTexts;
 
 	static var isWatching = false;
-	static var newTranslationName = 'your_language_code_here.json';
+	static var newLocalizationName = 'your_locale_code_here.json';
 
-	@:v('ideckia.language:en')
-	static var currentLang:String;
+	@:v('ideckia.locale:en_UK')
+	static var currentLocale:String;
 
 	static public function init() {
-		translations = Data.getTranslations(haxe.io.Path.join([js.Node.__dirname, LOCALIZATIONS_DIR]));
+		locTexts = Data.getLocalizations(haxe.io.Path.join([js.Node.__dirname, LOCALIZATIONS_DIR]));
 		loadFromDisk();
 	}
 
 	static function loadFromDisk() {
 		var absolutePath = Ideckia.getAppPath(LOCALIZATIONS_DIR);
 		if (sys.FileSystem.exists(absolutePath)) {
-			translations.merge(Data.getTranslations(LOCALIZATIONS_DIR));
+			locTexts.merge(Data.getLocalizations(LOCALIZATIONS_DIR));
 			watchForChanges();
 		}
 	}
@@ -32,22 +32,22 @@ class CoreTranslate {
 			return;
 
 		Chokidar.watch(Ideckia.getAppPath(LOCALIZATIONS_DIR)).on('change', (_, _) -> {
-			Log.info('Reloading translations...');
+			Log.info('Reloading localizations...');
 			init();
 		});
 
 		isWatching = true;
 	}
 
-	static public function newTranslation() {
+	static public function newLocalization() {
 		var absolutePath = Ideckia.getAppPath(LOCALIZATIONS_DIR);
 		if (!sys.FileSystem.exists(absolutePath)) {
 			sys.FileSystem.createDirectory(absolutePath);
 			watchForChanges();
 		}
 
-		absolutePath += '/$newTranslationName';
-		final innerTxtPath = js.Node.__dirname + LOCALIZATIONS_DIR + '/en.json';
+		absolutePath += '/$newLocalizationName';
+		final innerTxtPath = js.Node.__dirname + LOCALIZATIONS_DIR + '/en_UK.json';
 		final innerTxtContent = sys.io.File.getContent(innerTxtPath);
 
 		sys.io.File.saveContent(absolutePath, innerTxtContent);
@@ -56,24 +56,24 @@ class CoreTranslate {
 	}
 
 	static public function localizeAll(text:String) {
-		final currentLangLower = getCurrentLang();
-		if (!translations.exists(currentLangLower)) {
+		final currentLocaleLower = getCurrentLocale();
+		if (!locTexts.exists(currentLocaleLower)) {
 			// Try loading again, maybe the file has been created after the initialization of the app
 			loadFromDisk();
-			if (!translations.exists(currentLangLower)) {
-				Log.error('[$currentLangLower] language not found.');
+			if (!locTexts.exists(currentLocaleLower)) {
+				Log.error('[$currentLocaleLower] locale not found.');
 				return text;
 			}
 		}
 
-		var currentLangStrings = translations.get(currentLangLower);
-		for (string in currentLangStrings)
+		var currentLocaleStrings = locTexts.get(currentLocaleLower);
+		for (string in currentLocaleStrings)
 			text = text.replace('::${string.id}::', string.text);
 
 		return text;
 	}
 
-	static public function getCurrentLang() {
-		return currentLang.toLowerCase();
+	static public function getCurrentLocale() {
+		return currentLocale.toLowerCase();
 	}
 }

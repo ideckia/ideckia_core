@@ -244,8 +244,8 @@
 		"text": "Cancel"
 	},
 	{
-		"id": "translate_me",
-		"text": "Translate me!"
+		"id": "localize_me",
+		"text": "Localize me!"
 	},
 	{
 		"id": "confirm_remove_action",
@@ -332,12 +332,12 @@
 		"text": "Error creating action [{0}]. Maybe already exists an action with that name?"
 	},
 	{
-		"id": "alert_translation_create_ok",
-		"text": "[{0}] translation file copied successfully. Rename the file with your language code and start translating."
+		"id": "alert_localization_create_ok",
+		"text": "[{0}] localization file copied successfully. Rename the file with your locale code and start localizating."
 	},
 	{
-		"id": "alert_translation_create_error",
-		"text": "An error ocurred copying translation file: {0}"
+		"id": "alert_localization_create_error",
+		"text": "An error ocurred copying localization file: {0}"
 	},
 	{
 		"id": "alert_get_descriptors_error",

@@ -244,7 +244,7 @@
 		"text": "Ezeztatu"
 	},
 	{
-		"id": "translate_me",
+		"id": "localize_me",
 		"text": "Itzul nazazu!"
 	},
 	{
@@ -332,11 +332,11 @@
 		"text": "Errorea [{0}] ekintza sortzean. Beharbada badago izen hori duen ekintza bat?"
 	},
 	{
-		"id": "alert_translation_create_ok",
+		"id": "alert_localization_create_ok",
 		"text": "[{0}] itzulpen fitxategia ongi kopiatu da. Berrizendatu fitxategia zure hizkuntzaren kodearekin eta hasi itzultzen."
 	},
 	{
-		"id": "alert_translation_create_error",
+		"id": "alert_localization_create_error",
 		"text": "Errore bat gertatu da itzulpen fitxategia kopiatzerakoan: {0}"
 	},
 	{

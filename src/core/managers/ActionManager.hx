@@ -331,10 +331,10 @@ class ActionManager {
 			mediaPlayer: Ideckia.mediaPlayer,
 			updateClientState: itemId == null ? null : ClientManager.fromActionToClient.bind(itemId, name),
 			data: {
-				getCurrentLang: CoreTranslate.getCurrentLang,
+				getCurrentLocale: CoreLoc.getCurrentLocale,
 				getContent: Data.getContent,
 				getJson: Data.getJson,
-				getTranslations: Data.getTranslations,
+				getLocalizations: Data.getLocalizations,
 				getBytes: Data.getBytes,
 				getBase64: Data.getBase64
 			}
