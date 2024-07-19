@@ -290,8 +290,6 @@ class StateEditor {
 		Utils.addListener(listeners, Id.text_size.get(), 'change', onTextSizeChange);
 		Utils.addListener(listeners, Id.text_position.get(), 'change', onTextPositionChange);
 		Utils.addListener(listeners, Id.icons.get(), 'change', onIconChange);
-
-		updateState();
 	}
 
 	public static function hide() {
