@@ -314,9 +314,11 @@ class ActionEditor {
 			booleanValueInput = cast div.querySelector(Cls.prop_bool_value.selector());
 			multiValuesDiv = cast div.querySelector(Cls.prop_multi_values.selector());
 			// TODO set default value
-			if (prop.values != null && prop.values.length != 0) {
+			if (prop.possibleValues != null && prop.possibleValues.length != 0) {
 				possibleValuesSelect.classList.remove(Cls.hidden);
-				Utils.fillSelectElement(possibleValuesSelect, [for (i in 0...prop.values.length) {value: i, text: prop.values[i]}]);
+				Utils.fillSelectElement(possibleValuesSelect, [
+					for (i in 0...prop.possibleValues.length) {value: i, text: prop.possibleValues[i]}
+				]);
 			} else {
 				if (divDataType.startsWith("Bool")) {
 					booleanValueInput.classList.remove(Cls.hidden);
