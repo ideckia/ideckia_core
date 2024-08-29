@@ -13,11 +13,14 @@ class ActionManager {
 	static var actionsPath:String;
 	@:v('ideckia.actions-load-timeout-ms:1000')
 	static var actionsLoadTimeoutMs:UInt;
+	@:v('ideckia.actions-reload-delay-ms:1000')
+	static var actionsReloadDelayMs:UInt;
 
 	static var clientActions:Map<StateId, Array<{id:ActionId, action:IdeckiaAction}>>;
 	static var actionDescriptors:Array<ActionDescriptor>;
 	static var isWatching:Bool = false;
 	public static var creatingNewAction:Bool = false;
+	public static var changeDetected:Bool = false;
 
 	public static function getActionsPath() {
 		if (js.node.Path.isAbsolute(actionsPath))
@@ -162,9 +165,16 @@ class ActionManager {
 			actionDescriptors = null;
 			var actionDir = haxe.io.Path.directory(path);
 			var actionName = haxe.io.Path.withoutDirectory(actionDir);
-			Log.info('Change detected in [$actionName] action, reloading...');
-			unloadActions();
-			initClientActions();
+			Log.info('Change detected in [$actionName] action.');
+			if (!changeDetected) {
+				haxe.Timer.delay(() -> {
+					Log.info('Reloading all actions...');
+					unloadActions();
+					initClientActions();
+					changeDetected = false;
+				}, actionsReloadDelayMs);
+				changeDetected = true;
+			}
 		});
 
 		isWatching = true;
