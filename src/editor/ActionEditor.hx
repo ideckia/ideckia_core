@@ -1,3 +1,4 @@
+import js.html.HtmlElement;
 import js.html.UListElement;
 import api.IdeckiaApi;
 import api.internal.CoreApi;
@@ -317,7 +318,8 @@ class ActionEditor {
 			if (prop.possibleValues != null && prop.possibleValues.length != 0) {
 				possibleValuesSelect.classList.remove(Cls.hidden);
 				Utils.fillSelectElement(possibleValuesSelect, [
-					for (i in 0...prop.possibleValues.length) {value: i, text: prop.possibleValues[i]}
+					for (i in 0...prop.possibleValues.length)
+						{value: i, text: prop.possibleValues[i]}
 				]);
 			} else {
 				if (divDataType.startsWith("Bool")) {
@@ -326,10 +328,19 @@ class ActionEditor {
 					multiValuesDiv.dataset.type = divDataType.replace('Array<', '');
 					multiValuesDiv.classList.remove(Cls.hidden);
 				} else {
-					if (!prop.isShared && Utils.isNumeric(divDataType)) {
-						valueInput.type = 'number';
-					} else {
+					if (prop.isShared) {
 						valueInput.setAttribute('list', Id.shared_vars_datalist);
+					} else if (Utils.isNumeric(divDataType)) {
+						valueInput.type = 'number';
+					} else if (Utils.isPasswordType(prop.name)) {
+						valueInput.type = 'password';
+						var showPassword:HtmlElement = cast div.querySelector(Cls.show_password.selector());
+						showPassword.classList.remove(Cls.hidden);
+						switch Tag.input.firstFrom(showPassword) {
+							case Some(v):
+								v.onclick = (_) -> valueInput.type = (valueInput.type == 'text') ? 'password' : 'text';
+							case None:
+						}
 					}
 					valueInput.classList.remove(Cls.hidden);
 				}

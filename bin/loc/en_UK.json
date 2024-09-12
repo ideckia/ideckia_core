@@ -360,6 +360,10 @@
 		"text": "Action status [{0}]"
 	},
 	{
+		"id": "show_password",
+		"text": "Show password"
+	},
+	{
 		"id": "show_title_new_dir",
 		"text": "Create directory"
 	},

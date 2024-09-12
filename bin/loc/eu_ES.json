@@ -360,6 +360,10 @@
 		"text": "Ekintzaren egoera [{0}]"
 	},
 	{
+		"id": "show_password",
+		"text": "Erakutsi pasahitza"
+	},
+	{
 		"id": "show_title_new_dir",
 		"text": "Sortu direktorioa"
 	},

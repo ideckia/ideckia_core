@@ -86,6 +86,10 @@ class Utils {
 		return typeName.startsWith("Int") || typeName.startsWith("UInt") || typeName.startsWith("Float");
 	}
 
+	public static function isPasswordType(typeName:String) {
+		return typeName.toLowerCase().contains("password") || typeName.toLowerCase().contains("pwd");
+	}
+
 	public static function isPrimitiveTypeByName(typeName:String) {
 		return isNumeric(typeName.replace('Null<', '')) || typeName.replace('Null<', '').startsWith("String");
 	}
