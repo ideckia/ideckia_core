@@ -26,6 +26,9 @@ class WebSocketServer {
 	@:v('ideckia.port:8888')
 	static public var port:Int;
 
+	@:v('ideckia.password-input-names:password,pwd')
+	static public var passwordInputNames:String;
+
 	var ws:WebSocketServerJs;
 
 	public function new() {
@@ -115,10 +118,11 @@ class WebSocketServer {
 					}
 
 					if (absolutePath.endsWith('.js') || absolutePath.endsWith('.html')) {
+						var localizedBody = CoreLoc.localizeAll(sys.io.File.getContent(absolutePath));
 						resolve({
 							code: 200,
 							headers: headers,
-							body: CoreLoc.localizeAll(sys.io.File.getContent(absolutePath))
+							body: localizedBody.replace('::password_input_names::', passwordInputNames)
 						});
 					} else {
 						resolve({

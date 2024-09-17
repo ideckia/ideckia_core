@@ -20,6 +20,7 @@ typedef Listener = {
 class Utils {
 	static var lastItemId:UInt = 0;
 	static var lastStateId:UInt = 0;
+	static var passwordInputNames:Array<String>;
 
 	public static inline function clearElement(e:Element) {
 		while (e.hasChildNodes())
@@ -87,7 +88,10 @@ class Utils {
 	}
 
 	public static function isPasswordType(typeName:String) {
-		return typeName.toLowerCase().contains("password") || typeName.toLowerCase().contains("pwd");
+		for (passwordInputName in passwordInputNames)
+			if (typeName.toLowerCase().contains(passwordInputName))
+				return true;
+		return false;
 	}
 
 	public static function isPrimitiveTypeByName(typeName:String) {
