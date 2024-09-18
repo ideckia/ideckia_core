@@ -12,7 +12,10 @@ class Tray {
 	static var clientPath:String;
 	static var clientFullPath:String;
 
-	public static function show(port:Int) {
+	@:v('ideckia.port:8888')
+	static public var port:Int;
+
+	public static function show() {
 		init();
 
 		if (!sys.FileSystem.exists(exePath)) {
@@ -53,7 +56,7 @@ class Tray {
 				} else if (isLogs) {
 					Log.getLogsPath();
 				} else {
-					clientFullPath;
+					clientFullPath + ' $port';
 				}
 				Log.debug('Opening ${out}');
 				js.node.ChildProcess.spawn('$launchCmd $launchApp', {shell: true});

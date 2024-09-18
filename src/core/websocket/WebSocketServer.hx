@@ -24,7 +24,7 @@ class WebSocketServer {
 	public static var STATE_ID_ACTIONS_STATUS = ~/\/state\/([0-9]+)\/actions\/status/;
 
 	@:v('ideckia.port:8888')
-	static public var port:Int;
+	static var port:Int;
 
 	@:v('ideckia.password-input-names:password,pwd')
 	static public var passwordInputNames:String;

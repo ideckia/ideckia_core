@@ -94,7 +94,7 @@ class Ideckia {
 
 		var wsServer = new WebSocketServer();
 
-		Tray.show(WebSocketServer.port);
+		Tray.show();
 
 		LayoutManager.load().finally(() -> {
 			LayoutManager.watchForChanges();
