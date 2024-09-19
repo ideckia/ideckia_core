@@ -573,12 +573,11 @@ class App {
 	}
 
 	public static function updateSharedValues(?newSharedVar:{key:String, value:Any}) {
-		var sharedVars = editorData.layout.sharedVars;
-		if (sharedVars == null) {
+		if (editorData.layout.sharedVars == null) {
 			if (newSharedVar == null)
 				return;
 
-			sharedVars = [];
+			editorData.layout.sharedVars = [];
 		}
 
 		if (newSharedVar != null) {
@@ -596,7 +595,7 @@ class App {
 		Utils.clearElement(datalist);
 
 		var opt;
-		for (sv in sharedVars) {
+		for (sv in editorData.layout.sharedVars) {
 			opt = js.Browser.document.createOptionElement();
 			opt.value = '$' + sv.key;
 			datalist.appendChild(opt);
@@ -607,7 +606,6 @@ class App {
 		var f = editorData.actionDescriptors.filter(ad -> ad.name.toLowerCase() == actionName.toLowerCase());
 		if (f.length == 0)
 			return None;
-		trace(f[0]);
 		return Some(f[0]);
 	}
 

@@ -287,11 +287,10 @@ class ActionEditor {
 					prop.sharedName;
 				}
 				var found = false;
-				for (sv in App.editorData.layout.sharedVars) {
-					if (sv.key == sharedName) {
-						found = true;
-					}
-				}
+				if (App.editorData.layout.sharedVars != null)
+					for (sv in App.editorData.layout.sharedVars)
+						if (sv.key == sharedName)
+							found = true;
 
 				if (!found) {
 					var value = (prop.defaultValue == null) ? null : prop.defaultValue.replace('"', '').replace("'", '');
