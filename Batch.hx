@@ -3,34 +3,33 @@ import sys.io.Process;
 using StringTools;
 
 class Batch {
-	static inline var IDECKIA_GIT_BASE = '/home/josu/git/ideckia';
-	static inline var IDECKIA_APP_DIR = '/home/josu/ideckia';
-	static inline var GIT_USER = 'josuigoa';
-	static inline var GIT_MAIL = 'josuigoa@ni.eus';
+	static inline var IDECKIA_GIT_BASE = '';
+	static inline var IDECKIA_APP_DIR = '';
+	static inline var GIT_USER = '';
+	static inline var GIT_MAIL = '';
 
 	static var actions = [];
 
 	static public function main() {
 		var base = '$IDECKIA_GIT_BASE/actions/';
 		final ignoreActions = [];
+
 		for (d in sys.FileSystem.readDirectory(base)) {
 			if (!sys.FileSystem.isDirectory(base + d))
 				continue;
-			if (ignoreActions.contains('action_$d'))
+			if (ignoreActions.contains(d.replace('action_', '')))
 				continue;
-			trace(d);
 			Sys.setCwd(base + d);
 			// updateApi();
 			// localApi(d);
 			// haxeCompile(false); // build
 			// haxeCompile(true); // deploy
 			// gitStatus(d);
-			// gitReleaseStart(d);
-			// gitReleaseFinish(d);
 			// gitPush(d);
+			trace(d + ': ' + gitNextTag());
+			// gitCreateNewTag(d);
 			// gitPushLastTag(d);
-			// trace(gitNextTag());
-			copyToIdeckia(d);
+			// copyToIdeckia(d);
 			// gitSetUser({name: GIT_USER, mail: GIT_MAIL});
 			// gitGetBranchName(d);
 			// gitRenameMain();
@@ -68,26 +67,32 @@ class Batch {
 	}
 
 	static function gitStatus(actionName:String) {
+		if (gitStatusPending(actionName))
+			actions.push(actionName);
+	}
+
+	static function gitStatusPending(actionName:String) {
 		if (!sys.FileSystem.exists('.git'))
-			return;
+			return false;
 		var p = new Process('git status');
 		if (p.exitCode() != 0) {
 			trace('Error: ${p.stderr.readAll().toString()}');
-			return;
+			return false;
 		}
 
-		actions.push(actionName);
 		var out = '';
 		while (out != null) {
 			try {
 				out = p.stdout.readLine();
 
 				if (out.indexOf("nothing to commit") != -1)
-					actions.pop();
+					return false;
 			} catch (e:Any) {
 				break;
 			}
 		}
+
+		return true;
 	}
 
 	static function gitPush(actionName:String) {
@@ -126,7 +131,8 @@ class Batch {
 				lastTag = out;
 			}
 		} catch (e:Any) {
-			trace(e);
+			if (Std.string(e) == 'Eof')
+				lastTag = 'Eof';
 		}
 
 		return lastTag;
@@ -153,44 +159,33 @@ class Batch {
 		var lastTag = gitLastTag();
 		if (lastTag == '')
 			return '';
+		if (lastTag == 'Eof')
+			return 'v1.0.0';
 		var firstPart = lastTag.substring(0, lastTag.lastIndexOf('.') + 1);
 		var lastNumber = Std.parseInt(lastTag.substring(lastTag.lastIndexOf('.') + 1, lastTag.length));
 
 		return firstPart + Std.string(lastNumber + 1);
 	}
 
-	static function gitReleaseStart(actionName:String) {
+	static function gitCreateNewTag(actionName:String) {
 		if (!sys.FileSystem.exists('.git'))
 			return;
 
-		var nextTag = gitNextTag();
-		if (nextTag == '')
+		if (gitStatusPending(actionName)) {
+			trace('$actionName has pending changes, not creating new tag');
 			return;
-		if (nextTag == 'Eof')
-			nextTag = 'v1.0.0';
+		}
 
-		var p = new Process('git flow release start $nextTag');
+		var nextTag = gitNextTag();
+
+		var p = new Process('git tag -a $nextTag -m "version $nextTag"');
 		if (p.exitCode() != 0) {
 			trace('Error: ${p.stderr.readAll().toString()}');
 			return;
 		}
-		actions.push(actionName + ' - start release - next : $nextTag');
-	}
-
-	static function gitReleaseFinish(actionName:String) {
-		if (!sys.FileSystem.exists('.git'))
-			return;
-
-		var nextTag = gitNextTag();
-		if (nextTag == '')
-			return;
-
-		var p = new Process('git flow release finish $nextTag -m $nextTag');
-		if (p.exitCode() != 0) {
-			trace('Error: ${p.stderr.readAll().toString()}');
-			return;
-		}
-		actions.push(actionName + ' - release finish: $nextTag');
+		actions.push(actionName + ' - next : $nextTag');
+		trace(actionName + ' - next : $nextTag');
+		// actions.push(actionName + ' - start release - next : $nextTag');
 	}
 
 	static function gitSetUser(user:{name:String, mail:String}) {
