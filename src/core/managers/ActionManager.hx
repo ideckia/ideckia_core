@@ -20,7 +20,7 @@ class ActionManager {
 	static var actionDescriptors:Array<ActionDescriptor>;
 	static var isWatching:Bool = false;
 	public static var creatingNewAction:Bool = false;
-	public static var changeDetected:Bool = false;
+	public static var changeTimerRunning:Bool = false;
 
 	public static function getActionsPath() {
 		if (js.node.Path.isAbsolute(actionsPath))
@@ -166,14 +166,14 @@ class ActionManager {
 			var actionDir = haxe.io.Path.directory(path);
 			var actionName = haxe.io.Path.withoutDirectory(actionDir);
 			Log.info('Change detected in [$actionName] action.');
-			if (!changeDetected) {
+			if (!changeTimerRunning) {
 				haxe.Timer.delay(() -> {
 					Log.info('Reloading all actions...');
 					unloadActions();
 					initClientActions();
-					changeDetected = false;
+					changeTimerRunning = false;
 				}, actionsReloadDelayMs);
-				changeDetected = true;
+				changeTimerRunning = true;
 			}
 		});
 
@@ -188,10 +188,7 @@ class ActionManager {
 		return new js.lib.Promise((resolve, reject) -> {
 			var actionPath = getActionsPath();
 			actionDescriptors = [];
-			var cId = 0,
-				action:IdeckiaAction,
-				presetsPath,
-				descriptorPromises = [];
+			var cId = 0, action:IdeckiaAction, presetsPath, descriptorPromises = [];
 			for (c in sys.FileSystem.readDirectory(actionPath)) {
 				if (!sys.FileSystem.exists('$actionPath/$c/index.js') || c.startsWith('_'))
 					continue;

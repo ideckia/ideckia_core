@@ -6,6 +6,9 @@ using api.IdeckiaApi;
 using api.internal.CoreApi;
 
 class ClientManager {
+	static var updateTimerRunning:Bool = false;
+	static inline var SEND_FROM_ACTION_TO_CLIENT_TIMEOUT_MS = 500;
+
 	public static function handleMsg(msg:ClientMsg) {
 		switch msg.type {
 			case click | longPress:
@@ -147,6 +150,7 @@ class ClientManager {
 	public static function fromActionToClient(itemId:ItemId, actionName:String, newState:ItemState) {
 		if (newState == null || !LayoutManager.isItemVisible(itemId))
 			return;
+
 		Log.debug('From Action [$actionName] to client state [$itemId] [${newState.text}]');
 
 		var currentState = LayoutManager.getItemNextState(itemId).state;
@@ -170,6 +174,12 @@ class ClientManager {
 		if (bgc != null)
 			currentState.bgColor = bgc;
 
-		MsgManager.sendToAll(LayoutManager.currentDirForClient());
+		if (!updateTimerRunning) {
+			haxe.Timer.delay(() -> {
+				MsgManager.sendToAll(LayoutManager.currentDirForClient());
+				updateTimerRunning = false;
+			}, SEND_FROM_ACTION_TO_CLIENT_TIMEOUT_MS);
+			updateTimerRunning = true;
+		}
 	}
 }
