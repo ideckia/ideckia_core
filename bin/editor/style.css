@@ -261,7 +261,7 @@ input[type="radio"]:parent {
 #new-icon-drop-img>span {
     top: 4em;
     position: relative;
-    left: 24em;
+    left: 40%;
 }
 
 #dialog-buttons {
