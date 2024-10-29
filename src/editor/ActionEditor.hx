@@ -274,7 +274,6 @@ class ActionEditor {
 
 		var div:DivElement,
 			nameSpan:SpanElement,
-			valueInput:InputElement,
 			possibleValuesSelect:SelectElement,
 			booleanValueInput:InputElement,
 			multiValuesDiv:DivElement;
@@ -309,7 +308,7 @@ class ActionEditor {
 			var divDataType = prop.type.replace('Null<', '');
 			div.dataset.prop_type = divDataType;
 			nameSpan = cast div.querySelector(Cls.prop_name.selector());
-			valueInput = cast div.querySelector(Cls.prop_value.selector());
+			var valueInput = cast div.querySelector(Cls.prop_value.selector());
 			possibleValuesSelect = cast div.querySelector(Cls.prop_possible_values.selector());
 			booleanValueInput = cast div.querySelector(Cls.prop_bool_value.selector());
 			multiValuesDiv = cast div.querySelector(Cls.prop_multi_values.selector());
