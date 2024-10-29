@@ -1,5 +1,5 @@
-import api.IdeckiaApi.Endpoint;
 import api.IdeckiaApi.ActionStatus;
+import api.IdeckiaApi.Endpoint;
 import api.IdeckiaApi.TextPosition;
 import api.internal.CoreApi;
 import hx.Selectors.Cls;
@@ -96,9 +96,12 @@ class StateEditor {
 							var actionDescriptor = actionDescriptors[selectedActionIndex - 1];
 							var actionPresets = actionDescriptor.presets;
 							Id.new_action_description.get().textContent = actionDescriptor.description;
-							if (actionPresets != null) {
+							if (actionPresets != null && actionPresets.length != 0) {
+								Id.action_presets.as(SelectElement).disabled = false;
 								Utils.fillSelectElement(Id.action_presets.as(SelectElement),
 									emptyOption.concat([for (i in 0...actionPresets.length) {value: i + 1, text: actionPresets[i].name}]));
+							} else {
+								Id.action_presets.as(SelectElement).disabled = true;
 							}
 						});
 						Dialog.show('::show_title_new_action::', Id.new_action.get(), () -> {
