@@ -138,9 +138,9 @@ class StateEditor {
 								}
 
 								var actionPresets = actionDescriptor.presets;
-								if (actionPresets != null) {
+								if (actionPresets != null && actionPresets.length != 0) {
 									var selectedPresetIndex = Id.action_presets.as(SelectElement).selectedIndex;
-									if (selectedPresetIndex != 0) {
+									if (selectedPresetIndex > 0) {
 										var preset = actionPresets[selectedPresetIndex - 1];
 										var actionProps = preset.props;
 										if (actionProps == null) {
