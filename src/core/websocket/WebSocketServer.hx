@@ -181,9 +181,10 @@ class WebSocketServer {
 								headers: headers,
 								body: haxe.Json.stringify(body)
 							});
-						}).catchError(_ -> {
+						}).catchError(e -> {
+							Log.error(e);
 							resolve({
-								code: 200,
+								code: 404,
 								headers: headers,
 								body: '{}'
 							});

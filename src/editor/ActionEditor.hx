@@ -248,7 +248,8 @@ class ActionEditor {
 			var http = new haxe.Http('http://localhost:$port/$endpoint');
 			http.addHeader('Content-Type', 'application/json');
 			http.onError = (e) -> {
-				js.Browser.alert(Utils.formatString('::alert_error_action_desc::', [Std.string(action.id), e]));
+				if (action.enabled)
+					js.Browser.alert(Utils.formatString('::alert_error_action_desc::', [Std.string(action.id), e]));
 				switch App.getActionDescriptorByName(action.name) {
 					case None:
 						trace('Descriptor not found for [${action.name}]');
@@ -330,6 +331,8 @@ class ActionEditor {
 						valueInput.setAttribute('list', Id.shared_vars_datalist);
 					} else if (Utils.isNumeric(divDataType)) {
 						valueInput.type = 'number';
+					} else if (prop.name.toLowerCase().contains('_path')) {
+						valueInput.type = 'file';
 					} else if (Utils.isPasswordType(prop.name)) {
 						valueInput.type = 'password';
 						var showPassword:HtmlElement = cast div.querySelector(Cls.show_password.selector());
