@@ -41,8 +41,6 @@ class App {
 			}
 		});
 
-		@:privateAccess Utils.passwordInputNames = Id.password_input_names.get().innerText.split(',');
-
 		Id.dir_select.get().addEventListener('change', (event) -> {
 			if (editorData == null)
 				return;

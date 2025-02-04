@@ -143,9 +143,9 @@ class ItemEditor {
 			Utils.stopPropagation(event);
 
 			switch editingItem.kind {
-				case States(_, list):
+				case States(_, states):
 					var state = Utils.createNewState();
-					list.push(state);
+					states.push(state);
 					edit(editingItem, isFixedItem);
 					StateEditor.edit(state);
 				default:
@@ -219,7 +219,7 @@ class ItemEditor {
 				Id.item_kind_changedir_properties.get().classList.remove(Cls.hidden);
 
 				Utils.addListener(listeners, select, 'change', onToDirChange);
-			case States(_, list):
+			case States(_, states):
 				Id.add_state_btn.get().classList.remove(Cls.hidden);
 				Id.clear_item_btn.get().classList.remove(Cls.hidden);
 				var parentDiv = Id.item_kind_states_properties.get();
@@ -230,9 +230,9 @@ class ItemEditor {
 				parentDiv.append(ulLabel);
 				var uList = document.createUListElement();
 				var li;
-				var deletable = list.length > 1;
-				for (i in 0...list.length) {
-					li = StateEditor.show(list[i], deletable);
+				var deletable = states.length > 1;
+				for (i in 0...states.length) {
+					li = StateEditor.show(states[i], deletable);
 					li.dataset.state_id = Std.string(i);
 					uList.append(li);
 				}
