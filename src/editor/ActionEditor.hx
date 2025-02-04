@@ -113,6 +113,11 @@ class ActionEditor {
 			editingAction = action;
 			var fieldValue;
 			Id.action_title.get().textContent = Utils.formatString('::text_content_action_props::', [actionDescriptor.name]);
+			Utils.addListener(listeners, Id.props_to_clipboard_btn.get(), 'click', (_) -> {
+				js.Browser.window.navigator.clipboard.writeText(haxe.Json.stringify(editingAction.props, null, '  '))
+					.then(_ -> js.Browser.alert('::success_props_to_clipboard::'))
+					.catchError(e -> js.Browser.alert(Utils.formatString('::error_props_to_clipboard::', [e])));
+			});
 			Id.action_description.get().textContent = actionDescriptor.description;
 			Id.action_properties.get().classList.remove(Cls.hidden);
 			for (div in createFromDescriptor(actionDescriptor)) {

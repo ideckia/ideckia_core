@@ -405,7 +405,19 @@
 	},
 	{
 		"id": "text_content_action_props",
-		"text": "[{0}] ekintzaren xehetasunak"
+		"text": "[{0}] ekintzaren propietateak"
+	},
+	{
+		"id": "props_to_clipboard",
+		"text": "Kopiatu propietateak arbelera"
+	},
+	{
+		"id": "success_props_to_clipboard",
+		"text": "Propietateak arbelean ongi kopiatu dira"
+	},
+	{
+		"id": "error_props_to_clipboard",
+		"text": "Errorea propietateak arbelean kopiatzean: [{0}]"
 	},
 	{
 		"id": "text_content_shared_variable",

@@ -408,6 +408,18 @@
 		"text": "[{0}] action properties"
 	},
 	{
+		"id": "props_to_clipboard",
+		"text": "Copy properties to clipboard"
+	},
+	{
+		"id": "success_props_to_clipboard",
+		"text": "Properties succesfully copied to the clipboard"
+	},
+	{
+		"id": "error_props_to_clipboard",
+		"text": "Error copying properties to the clipboard: [{0}]"
+	},
+	{
 		"id": "text_content_shared_variable",
 		"text": "(shared values)"
 	},
