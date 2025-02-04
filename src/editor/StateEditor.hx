@@ -1,5 +1,6 @@
 import api.IdeckiaApi.ActionStatus;
 import api.IdeckiaApi.Endpoint;
+import api.IdeckiaApi.PropEditorFieldType;
 import api.IdeckiaApi.TextPosition;
 import api.internal.CoreApi;
 import hx.Selectors.Cls;
@@ -161,7 +162,7 @@ class StateEditor {
 								if (actionDescriptor.props != null) {
 									for (p in actionDescriptor.props) {
 										defValue = (p.defaultValue == null) ? null : p.defaultValue.replace('"', '').replace("'", '');
-										if (p.type != null && p.type.contains('Bool'))
+										if (p.type != null && p.type == PropEditorFieldType.boolean)
 											Reflect.setField(actionDefaultProps, p.name, defValue == 'true');
 										else
 											Reflect.setField(actionDefaultProps, p.name, defValue);

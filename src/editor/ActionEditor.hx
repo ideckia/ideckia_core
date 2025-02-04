@@ -198,7 +198,6 @@ class ActionEditor {
 							liChild.type = 'text';
 							liChild.setAttribute('list', Id.shared_vars_datalist);
 						}
-
 						if (value != null)
 							liChild.value = (isPrimitive) ? value : haxe.Json.stringify(value);
 
@@ -306,7 +305,7 @@ class ActionEditor {
 			div = Utils.cloneElement(Id.action_prop_tpl.get(), DivElement);
 			div.classList.remove(Cls.hidden);
 			div.id = prop.name;
-			var divDataType = prop.type.replace('Null<', '');
+			var divDataType = PropEditorFieldType.fromTypeName(prop.name, prop.type);
 			div.dataset.prop_type = divDataType;
 			nameSpan = cast div.querySelector(Cls.prop_name.selector());
 			var valueInput = cast div.querySelector(Cls.prop_value.selector());
@@ -321,19 +320,23 @@ class ActionEditor {
 						{value: i, text: prop.possibleValues[i]}
 				]);
 			} else {
-				if (divDataType.startsWith("Bool")) {
+				if (divDataType == PropEditorFieldType.boolean) {
 					booleanValueInput.classList.remove(Cls.hidden);
-				} else if (divDataType.startsWith('Array')) {
-					multiValuesDiv.dataset.type = divDataType.replace('Array<', '');
+				} else if (divDataType.startsWith(PropEditorFieldType.listOf)) {
+					multiValuesDiv.dataset.type = divDataType.substring(0, divDataType.length - 1).replace(PropEditorFieldType.listOf + '<', '');
 					multiValuesDiv.classList.remove(Cls.hidden);
+				} else if (divDataType == PropEditorFieldType.icon) {
+					possibleValuesSelect.classList.remove(Cls.hidden);
+					Utils.fillSelectElement(possibleValuesSelect, [
+						for (i in 0...App.icons.length)
+							{value: i, text: App.icons[i].name}
+					]);
 				} else {
 					if (prop.isShared) {
 						valueInput.setAttribute('list', Id.shared_vars_datalist);
-					} else if (Utils.isNumeric(divDataType)) {
+					} else if (divDataType == PropEditorFieldType.number) {
 						valueInput.type = 'number';
-					} else if (prop.name.toLowerCase().contains('_path')) {
-						valueInput.type = 'file';
-					} else if (Utils.isPasswordType(prop.name)) {
+					} else if (divDataType == PropEditorFieldType.password) {
 						valueInput.type = 'password';
 						var showPassword:HtmlElement = cast div.querySelector(Cls.show_password.selector());
 						showPassword.classList.remove(Cls.hidden);

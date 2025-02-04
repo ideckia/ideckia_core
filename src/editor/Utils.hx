@@ -1,3 +1,4 @@
+import api.IdeckiaApi.PropEditorFieldType;
 import hx.Selectors.IdSel;
 import api.internal.CoreApi;
 import hx.Selectors.Cls;
@@ -20,7 +21,6 @@ typedef Listener = {
 class Utils {
 	static var lastItemId:UInt = 0;
 	static var lastStateId:UInt = 0;
-	static var passwordInputNames:Array<String>;
 
 	public static inline function clearElement(e:Element) {
 		while (e.hasChildNodes())
@@ -87,15 +87,11 @@ class Utils {
 		return typeName.startsWith("Int") || typeName.startsWith("UInt") || typeName.startsWith("Float");
 	}
 
-	public static function isPasswordType(typeName:String) {
-		for (passwordInputName in passwordInputNames)
-			if (typeName.toLowerCase().contains(passwordInputName))
-				return true;
-		return false;
-	}
-
-	public static function isPrimitiveTypeByName(typeName:String) {
-		return isNumeric(typeName.replace('Null<', '')) || typeName.replace('Null<', '').startsWith("String");
+	public static function isPrimitiveTypeByName(fieldType:String) {
+		return switch fieldType {
+			case PropEditorFieldType.boolean | PropEditorFieldType.listOf | PropEditorFieldType.object: false;
+			case x: true;
+		}
 	}
 
 	public static function cloneElement<T:js.html.Element>(element:Element, cls:Class<T>):T {
