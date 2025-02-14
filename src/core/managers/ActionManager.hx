@@ -141,8 +141,18 @@ class ActionManager {
 		});
 	}
 
+	static function deinitAllActions() {
+		for (actions in clientActions)
+			for (a in actions) {
+				var hasDeinitMethod = js.Syntax.code("typeof {0}.deinit", a.action) == 'function';
+				if (hasDeinitMethod)
+					a.action.deinit();
+			}
+	}
+
 	public static function unloadActions() {
 		LayoutManager.hideCurrentItems();
+		deinitAllActions();
 		var normalizedActionsPath = haxe.io.Path.normalize(getActionsPath()).toLowerCase();
 		for (module in Require.cache) {
 			if (module == null || !haxe.io.Path.normalize(module.id.toLowerCase()).startsWith(normalizedActionsPath))
