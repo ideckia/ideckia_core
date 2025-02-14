@@ -172,6 +172,10 @@ class ActionManager {
 		Chokidar.watch(ActionManager.getActionsPath()).on('change', (path) -> {
 			if (creatingNewAction)
 				return;
+			var fileName = haxe.io.Path.withoutDirectory(path);
+			if (fileName.startsWith('__'))
+				return;
+
 			actionDescriptors = null;
 			var actionDir = haxe.io.Path.directory(path);
 			var actionName = haxe.io.Path.withoutDirectory(actionDir);
