@@ -144,8 +144,7 @@ class ActionManager {
 	static function deinitAllActions() {
 		for (actions in clientActions)
 			for (a in actions) {
-				var hasDeinitMethod = js.Syntax.code("typeof {0}.deinit", a.action) == 'function';
-				if (hasDeinitMethod)
+				if (Utils.hasJsFunction(a.action, 'deinit'))
 					a.action.deinit();
 			}
 	}
@@ -268,8 +267,7 @@ class ActionManager {
 			var promises = [];
 			var hasGetStatusMethod;
 			for (cAction in stateActions) {
-				hasGetStatusMethod = js.Syntax.code("typeof {0}.getStatus", cAction.action) == 'function';
-				if (!hasGetStatusMethod)
+				if (!Utils.hasJsFunction(cAction.action, 'getStatus'))
 					promises.push(js.lib.Promise.reject('No [getStatus] method found'));
 				else
 					promises.push(cAction.action.getStatus());

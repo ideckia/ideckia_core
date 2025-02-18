@@ -89,8 +89,7 @@ class LayoutManager {
 		switch ActionManager.getActionsByStateId(state.id) {
 			case Some(actions):
 				for (action in actions) {
-					var hasHideMethod = js.Syntax.code("typeof {0}.hide", action) == 'function';
-					if (hasHideMethod)
+					if (Utils.hasJsFunction(action, 'hide'))
 						action.hide();
 				}
 			case None:
@@ -104,8 +103,7 @@ class LayoutManager {
 			switch ActionManager.getActionsByStateId(state.id) {
 				case Some(actions):
 					for (action in actions) {
-						var hasShowMethod = js.Syntax.code("typeof {0}.show", action) == 'function';
-						if (hasShowMethod)
+						if (Utils.hasJsFunction(action, 'show'))
 							promises.push(action.show(state));
 					}
 				case None:

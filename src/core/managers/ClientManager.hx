@@ -96,8 +96,7 @@ class ClientManager {
 										});
 									} else {
 										prevAction = action;
-										var hasOnLongPressMethod = js.Syntax.code("typeof {0}.onLongPress", action) == 'function';
-										if (hasOnLongPressMethod)
+										if (Utils.hasJsFunction(action, 'onLongPress'))
 											return action.onLongPress(newState);
 										else
 											return js.lib.Promise.resolve(new ActionOutcome({state: currentState}));
