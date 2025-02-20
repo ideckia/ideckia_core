@@ -1,3 +1,4 @@
+import js.html.DragEvent;
 import api.internal.CoreApi;
 import hx.Selectors.Cls;
 import hx.Selectors.Id;
@@ -95,20 +96,20 @@ class DirEditor {
 		draggingItemId = Std.parseInt(itemId);
 	}
 
-	static function onDragOver(e:Event) {
+	static function onDragOver(e:DragEvent) {
 		e.preventDefault();
 		var targetElement = cast(e.currentTarget, Element);
 		if (!targetElement.classList.contains(Cls.drag_over))
 			targetElement.classList.add(Cls.drag_over);
 	}
 
-	static function onDragLeave(e:Event) {
+	static function onDragLeave(e:DragEvent) {
 		e.preventDefault();
 		var targetElement = cast(e.currentTarget, Element);
 		targetElement.classList.remove(Cls.drag_over);
 	}
 
-	static function onDrop(e:Event) {
+	static function onDrop(e:DragEvent) {
 		for (d in Cls.drag_over.get())
 			d.classList.remove(Cls.drag_over);
 		var targetItemId = Std.parseInt(cast(e.currentTarget, Element).dataset.item_id);
@@ -127,8 +128,19 @@ class DirEditor {
 		}
 
 		if (itemToMoveIndex != -1 && targetIndex != -1) {
-			var itemToMove = currentDir.items.splice(itemToMoveIndex, 1)[0];
-			currentDir.items.insert(targetIndex, itemToMove);
+			if (e.ctrlKey) {
+				// copy item
+				var targetItem = currentDir.items[targetIndex];
+				if (targetItem.kind != null) {
+					js.Browser.alert('::alert_target_item_not_empty::');
+					return;
+				}
+				targetItem.kind = Utils.cloneItemKind(currentDir.items[itemToMoveIndex]);
+			} else {
+				// move item
+				var itemToMove = currentDir.items.splice(itemToMoveIndex, 1)[0];
+				currentDir.items.insert(targetIndex, itemToMove);
+			}
 			App.dirtyData = true;
 			refresh();
 		}

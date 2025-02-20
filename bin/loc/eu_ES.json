@@ -360,6 +360,10 @@
 		"text": "Ekintzaren egoera [{0}]"
 	},
 	{
+		"id": "alert_target_item_not_empty",
+		"text": "Item bat bikoizterakoan, helburuak hutsik egon behar du."
+	},
+	{
 		"id": "show_password",
 		"text": "Erakutsi pasahitza"
 	},

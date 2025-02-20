@@ -360,6 +360,10 @@
 		"text": "Action status [{0}]"
 	},
 	{
+		"id": "alert_target_item_not_empty",
+		"text": "When duplicating an item, the destination must be empty."
+	},
+	{
 		"id": "show_password",
 		"text": "Show password"
 	},

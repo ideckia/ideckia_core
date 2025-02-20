@@ -40,7 +40,7 @@ class Utils {
 		ActionEditor.hide();
 	}
 
-	public static function addListener(listeners:Array<Listener>, e:Element, t:String, cb:Event->Void, once:Bool = false) {
+	public static function addListener(listeners:Array<Listener>, e:Element, t:String, cb:Dynamic->Void, once:Bool = false) {
 		e.addEventListener(t, cb, {once: once});
 		listeners.push({
 			element: e,
@@ -92,6 +92,25 @@ class Utils {
 			case PropEditorFieldType.boolean | PropEditorFieldType.listOf | PropEditorFieldType.object: false;
 			case x: true;
 		}
+	}
+
+	public static function cloneItemKind(item:CoreItem):Kind {
+		var clone:CoreItem = haxe.Json.parse(haxe.Json.stringify(item));
+
+		switch clone.kind {
+			case ChangeDir(_, state):
+				state.id = getNextStateId();
+				for (a in state.actions)
+					a.id = null;
+			case States(_, list):
+				for (s in list) {
+					s.id = getNextStateId();
+					for (a in s.actions)
+						a.id = null;
+				}
+		}
+
+		return clone.kind;
 	}
 
 	public static function cloneElement<T:js.html.Element>(element:Element, cls:Class<T>):T {

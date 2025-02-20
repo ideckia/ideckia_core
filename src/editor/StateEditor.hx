@@ -55,7 +55,7 @@ class StateEditor {
 				for (i in 0...state.actions.length) {
 					sAction = state.actions[i];
 					liAction = ActionEditor.show(sAction, statuses.get(sAction.id.toUInt()), state);
-					liAction.dataset.action_id = Std.string(i);
+					liAction.dataset.action_id = Std.string(sAction.id.toUInt());
 					ulActions.append(liAction);
 				}
 				parentLi.append(ulActions);

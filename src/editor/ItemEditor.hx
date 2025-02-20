@@ -233,7 +233,7 @@ class ItemEditor {
 				var deletable = states.length > 1;
 				for (i in 0...states.length) {
 					li = StateEditor.show(states[i], deletable);
-					li.dataset.state_id = Std.string(i);
+					li.dataset.state_id = Std.string(states[i].id.toUInt());
 					uList.append(li);
 				}
 				parentDiv.append(uList);
