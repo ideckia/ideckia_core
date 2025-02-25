@@ -9,7 +9,7 @@ import js.lib.Promise;
 import haxe.ds.Option;
 
 class FallbackDialog implements IDialog {
-	static inline var FALLBACK_MESSAGE = 'Using a very basic implementation of api.dialog.IDialog implementation found. Please provide an implementation as defined here [https://github.com/ideckia/ideckia_api/blob/main/api/dialog/IDialog.hx]';
+	static inline var FALLBACK_MESSAGE = 'Using a very basic implementation of api.dialog.IDialog implementation. Please provide an implementation as defined here [https://github.com/ideckia/ideckia_api/blob/main/api/dialog/IDialog.hx]';
 
 	public function new() {
 		Dialog.init();
@@ -69,19 +69,23 @@ class FallbackDialog implements IDialog {
 		});
 	}
 
-	public function password(title:String, text:String, showUsername:Bool = false, ?options:WindowOptions):Promise<Option<{username:String, password:String}>> {
+	public function password(title:String, text:String, showUsername:Bool = false, userLabel:String = "username", passwordLabel:String = "password",
+			?options:WindowOptions):Promise<Option<{
+			username:String,
+			password:String
+		}>> {
 		trace(FALLBACK_MESSAGE);
 		return new js.lib.Promise((resolve, reject) -> {
 			Dialog.show(Entry, title, text).then(resp -> resolve(Some({username: null, password: resp}))).catchError(reject);
 		});
-	}
+		}
 
 	public function progress(title:String, text:String, autoClose:Bool = true, ?options:WindowOptions):Progress {
 		trace(FALLBACK_MESSAGE);
 		return new FallbackProgress();
 	}
 
-	public function color(title:String, ?initialColor:String, ?options:WindowOptions):Promise<Option<Color>> {
+	public function color(title:String, label:String = "Select color", ?initialColor:String, ?options:WindowOptions):Promise<Option<Color>> {
 		trace(FALLBACK_MESSAGE);
 		inline function rndColorComp()
 			return Std.int(Math.random() * 255);
