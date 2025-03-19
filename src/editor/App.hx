@@ -233,7 +233,7 @@ class App {
 				var dataTransfer = e.dataTransfer;
 				if (dataTransfer.files.length > 0) {
 					var image = dataTransfer.files.item(0);
-					var validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+					var validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
 					if (validTypes.indexOf(image.type) == -1) {
 						js.Browser.alert(Utils.formatString('::alert_invalid_file_type::', [validTypes.join(', ')]));
 						return;

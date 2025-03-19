@@ -21,7 +21,11 @@ menu {
     width: 3em;
     top: 1em;
     position: relative;
-    margin-left: 1em;
+}
+
+.item-svg-icon {
+    top: 0em;
+    left: 13em;
 }
 
 #dialog-content>*>*>.remove-icon-name-cb {

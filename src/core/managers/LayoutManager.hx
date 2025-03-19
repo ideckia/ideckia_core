@@ -274,7 +274,7 @@ class LayoutManager {
 
 		var icons = new haxe.DynamicAccess<String>();
 		function getIconData(iconName:String) {
-			if (iconName != null && iconName.length > 1000) {
+			if (iconName != null && iconName.length > 100) {
 				var iconMd5 = haxe.crypto.Md5.encode(iconName);
 				if (!icons.exists(iconMd5))
 					icons.set(iconMd5, iconName);

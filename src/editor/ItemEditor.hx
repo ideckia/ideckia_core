@@ -33,16 +33,7 @@ class ItemEditor {
 			case null:
 				text = 'empty';
 			case ChangeDir(_, state):
-				switch Cls.item_icon.firstFrom(cell) {
-					case Some(cell_icon):
-						if (state.icon != null && state.icon != '') {
-							cell_icon.classList.remove(Cls.hidden);
-							cast(cell_icon, ImageElement).src = extractIcon(state);
-						} else {
-							cell_icon.classList.add(Cls.hidden);
-						}
-					case None:
-				}
+				showIcon(cell, state);
 				text = state.text;
 				textPosition = switch state.textPosition {
 					case top: Cls.layout_top_text;
@@ -61,16 +52,7 @@ class ItemEditor {
 				if (index == null)
 					index = 0;
 				var state = list[index];
-				switch Cls.item_icon.firstFrom(cell) {
-					case Some(cell_icon):
-						if (state.icon != null && state.icon != '') {
-							cell_icon.classList.remove(Cls.hidden);
-							cast(cell_icon, ImageElement).src = extractIcon(state);
-						} else {
-							cell_icon.classList.add(Cls.hidden);
-						}
-					case None:
-				}
+				showIcon(cell, state);
 				text = state.text;
 				textPosition = switch state.textPosition {
 					case top: Cls.layout_top_text;
@@ -118,15 +100,36 @@ class ItemEditor {
 		return Some(cell);
 	}
 
-	static function extractIcon(state) {
-		var base64Icon = switch Utils.getIconIndexByName(state.icon) {
-			case Some(index):
-				App.icons[index].base64;
-			case None:
-				state.icon;
-		};
+	static function showIcon(cell:DivElement, state:CoreState) {
+		if (state.icon == null)
+			return;
 
-		return Utils.defaultBase64Prefix(base64Icon);
+		var icon = state.icon;
+		var isSvg = icon.indexOf('<svg') != -1;
+
+		if (!isSvg)
+			icon = switch Utils.getIconIndexByName(state.icon) {
+				case Some(index):
+					Utils.defaultBase64Prefix(App.icons[index].base64);
+				case None:
+					Utils.defaultBase64Prefix(state.icon);
+			};
+
+		if (isSvg) {
+			switch Cls.item_svg_icon.firstFromAs(cell, DivElement) {
+				case Some(cell_icon):
+					cell_icon.classList.remove(Cls.hidden);
+					cell_icon.innerHTML = icon;
+				case None:
+			}
+		} else {
+			switch Cls.item_img_icon.firstFromAs(cell, ImageElement) {
+				case Some(cell_icon):
+					cell_icon.classList.remove(Cls.hidden);
+					cell_icon.src = icon;
+				case None:
+			}
+		}
 	}
 
 	public static function refresh() {
