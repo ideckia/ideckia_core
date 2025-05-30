@@ -9,6 +9,7 @@
 --library tink_http
 
 -D core
+-D appropos_read_only=false
 -D analyzer-optimize
 -D js-es=6
 -D no-deprecation-warnings
