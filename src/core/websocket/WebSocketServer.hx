@@ -63,6 +63,8 @@ class WebSocketServer {
 			connection.on('close', function(reasonCode, description) {
 				onClose(connection, reasonCode, description);
 			});
+
+			connection.on('error', Log.error);
 		});
 	}
 
@@ -276,7 +278,7 @@ class WebSocketServer {
 
 	public dynamic function onClose(connection:WebSocketConnection, reasonCode:Int, description:String):Void {}
 
-	function getIPAddress() {
+	static public function getIPAddress() {
 		var interfaces = Os.networkInterfaces();
 		for (iface in interfaces) {
 			for (alias in iface) {

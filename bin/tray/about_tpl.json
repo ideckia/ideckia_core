@@ -1,8 +1,8 @@
 {
-	"title": "About Ideckia",
+	"title": "::about_ideckia::",
 	"window_size": [
-		360,
-		210
+		450,
+		550
 	],
 	"body": [
 		{
@@ -12,7 +12,23 @@
 		},
 		{
 			"label": {
-				"text": "Here you can find the code of all the Ideckia project"
+				"text": "::about_ideckia_address:: ::address::"
+			}
+		},
+		{
+			"label": {
+				"text": "::about_scan_qr_description::"
+			}
+		},
+		{
+			"image": {
+				"id": "qr_address",
+				"path": "::qr_path::"
+			}
+		},
+		{
+			"label": {
+				"text": "::about_code_text::"
 			}
 		},
 		{
@@ -23,18 +39,25 @@
 		},
 		{
 			"label": {
-				"text": "If you have any problems or issues, please report them here:"
+				"text": "::about_issues_text::"
 			}
 		},
 		{
 			"link": {
-				"label": "Report an issue",
+				"label": "::about_report_issue::",
 				"url": "https://github.com/ideckia/ideckia/issues/new"
 			}
 		},
 		{
 			"label": {
-				"text": "Created by Josu Igoa"
+				"text": "::about_created_by::"
+			}
+		},
+		{
+			"check": {
+				"id": "show_on_startup",
+				"label": "::about_show_startup::",
+				"checked": ::startup_checked::
 			}
 		}
 	]

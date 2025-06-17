@@ -436,8 +436,40 @@
 		"text": "EGOERAK"
 	},
 	{
-		"id": "tray_ideckia_port",
-		"text": "ideckia portua:"
+		"id": "about_ideckia",
+		"text": "ideckiari buruz"
+	},
+	{
+		"id": "about_ideckia_address",
+		"text": "ideckia helbidea:"
+	},
+	{
+		"id": "about_scan_qr_description",
+		"text": "Eskaneatu beheko QR hau mugikorreko aplikazioarekin zuzenean konektatzeko."
+	},
+	{
+		"id": "about_code_text",
+		"text": "Ideckia proiektuaren kode guztia hemen aurki dezakezu"
+	},
+	{
+		"id": "about_issues_text",
+		"text": "Edozein arazo aurkitzen baduzu, jakinarazi hemen:"
+	},
+	{
+		"id": "about_report_issue",
+		"text": "Jakinarazi arazoa"
+	},
+	{
+		"id": "about_created_by",
+		"text": "Josu Igoak sortua"
+	},
+	{
+		"id": "about_show_startup",
+		"text": "Erakutsi leiho hau martxan jartzean"
+	},
+	{
+		"id": "tray_connection_info",
+		"text": "konexio informazioa"
 	},
 	{
 		"id": "tray_open",
@@ -456,12 +488,20 @@
 		"text": "log-ak"
 	},
 	{
+		"id": "tray_open_conf",
+		"text": "konfigurazioa"
+	},
+	{
 		"id": "tray_about",
 		"text": "honi buruz"
 	},
 	{
 		"id": "tray_quit",
 		"text": "irten"
+	},
+	{
+		"id": "configuration_title",
+		"text": "konfigurazioa"
 	},
 	{
 		"id": "action_tooltip_name",

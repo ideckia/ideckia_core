@@ -2,8 +2,8 @@
 	"icon": "::icon_path::",
 	"menu": [
 		{
-			"id": "port_info",
-			"text": "::tray_ideckia_port:: ::port::",
+			"id": "app_name",
+			"text": "ideckia",
 			"disabled": 1
 		},
 		{
@@ -19,8 +19,8 @@
 					"text": "::tray_open_editor::"
 				},
 				{
-					"id": "logs",
-					"text": "::tray_open_logs::"
+					"id": "config",
+					"text": "::tray_open_conf::"
 				}
 			]
 		},

@@ -1,3 +1,6 @@
+import appropos.Appropos;
+import websocket.WebSocketServer;
+
 using StringTools;
 
 class Tray {
@@ -15,7 +18,13 @@ class Tray {
 	@:v('ideckia.port:8888')
 	static public var port:Int;
 
-	public static function show() {
+	@:v('ideckia.show-about-on-startup:true')
+	static public var showAboutOnStartup:Bool;
+
+	static var address:String;
+	static public var trayDir:String;
+
+	public static function create() {
 		init();
 
 		if (!sys.FileSystem.exists(exePath)) {
@@ -30,7 +39,6 @@ class Tray {
 
 		var menuDefContent = sys.io.File.getContent(menuPath);
 		menuDefContent = menuDefContent.replace('::icon_path::', iconPath);
-		menuDefContent = menuDefContent.replace('::port::', Std.string(port));
 		menuDefContent = menuDefContent.replace('::client_disabled::', (sys.FileSystem.exists(clientFullPath)) ? '0' : '1');
 		var menuDef:MenuDef = haxe.Json.parse(CoreLoc.localizeAll(menuDefContent));
 
@@ -41,9 +49,8 @@ class Tray {
 		trayProcess.stdout.on('data', d -> {
 			var out = Std.string(d);
 			var isEditor = out.startsWith('editor');
-			var isLogs = out.startsWith('logs');
 			var isClient = out.startsWith('client');
-			if (isEditor || isLogs || isClient) {
+			if (isEditor || isClient) {
 				var launchCmd = switch Sys.systemName() {
 					case "Linux": (isClient) ? '' : 'xdg-open';
 					case "Mac": 'open';
@@ -53,15 +60,15 @@ class Tray {
 
 				var launchApp = if (isEditor) {
 					'http://localhost:${port}/editor';
-				} else if (isLogs) {
-					Log.getLogsPath();
 				} else {
 					clientFullPath + ' $port';
 				}
 				Log.debug('Opening ${out}');
 				js.node.ChildProcess.spawn('$launchCmd $launchApp', {shell: true});
 			} else if (out.startsWith('about')) {
-				Ideckia.dialog.custom(aboutDialogPath);
+				showAboutDialog();
+			} else if (out.startsWith('config')) {
+				showConfigurationDialog();
 			} else if (out.startsWith('quit')) {
 				Sys.exit(0);
 			}
@@ -79,6 +86,38 @@ class Tray {
 				Log.raw(e.stack);
 			else
 				Log.raw(e);
+		});
+
+		if (showAboutOnStartup)
+			haxe.Timer.delay(showAboutDialog, 1000);
+	}
+
+	static function showConfigurationDialog() {
+		Ideckia.dialog.custom(Config.configDialogPath).then(responseOpt -> {
+			switch responseOpt {
+				case Some(response):
+					for (r in response) {
+						Log.debug('${r.id} -> ${r.value}');
+
+						Appropos.updateProps(response.map(r -> {key: r.id, value: r.value}));
+					}
+				case None:
+			}
+		});
+	}
+
+	static function showAboutDialog() {
+		Ideckia.dialog.custom(aboutDialogPath).then(responseOpt -> {
+			switch responseOpt {
+				case Some(response):
+					for (r in response) {
+						if (r.id == 'show_on_startup') {
+							showAboutOnStartup = r.value == 'true';
+						}
+					}
+					copyAbout();
+				case None:
+			}
 		});
 	}
 
@@ -99,46 +138,77 @@ class Tray {
 		if (!Ideckia.isPkg())
 			return;
 
-		var trayDir = Ideckia.getAppPath(TRAY_DIR_NAME);
+		trayDir = Ideckia.getAppPath(TRAY_DIR_NAME);
 
 		if (!sys.FileSystem.exists(trayDir))
 			sys.FileSystem.createDirectory(trayDir);
 
-		var execFilename = '';
-		var iconFilename = '';
-		switch (Sys.systemName()) {
+		menuPath = haxe.io.Path.join([js.Node.__dirname, TRAY_DIR_NAME, 'menu_tpl.json']);
+		address = '${WebSocketServer.getIPAddress()}:$port';
+
+		copyTrayExecutable();
+		copyIcon();
+		copyAbout();
+
+		Config.createConfigDialogData();
+	}
+
+	static function copyTrayExecutable() {
+		final execFilename = switch (Sys.systemName()) {
 			case 'Mac':
-				execFilename = 'ideckia_tray_macos';
-				iconFilename = 'icon.png';
+				'ideckia_tray_macos';
 			case 'Linux':
-				execFilename = 'ideckia_tray_linux';
-				iconFilename = 'icon.png';
+				'ideckia_tray_linux';
 			case 'Windows':
-				execFilename = 'ideckia_tray.exe';
-				iconFilename = 'icon.ico';
+				'ideckia_tray.exe';
 			default:
 				'';
 		}
-
 		exePath = haxe.io.Path.join([trayDir, execFilename]);
 		if (execFilename != '' && !sys.FileSystem.exists(exePath)) {
 			var src = haxe.io.Path.join([js.Node.__dirname, TRAY_DIR_NAME, execFilename]);
 			Log.info('Copying tray executable [$execFilename] to $exePath');
 			sys.io.File.copy(src, exePath);
 		}
+	}
 
+	static function copyIcon() {
+		final iconFilename = switch (Sys.systemName()) {
+			case 'Mac' | 'Linux':
+				'icon.png';
+			case 'Windows':
+				'icon.ico';
+			default:
+				'';
+		}
 		iconPath = haxe.io.Path.join([trayDir, iconFilename]);
 		if (iconFilename != '' && !sys.FileSystem.exists(iconPath)) {
 			var src = haxe.io.Path.join([js.Node.__dirname, TRAY_DIR_NAME, iconFilename]);
 			Log.info('Copying tray icon [$iconFilename] to $iconPath');
 			sys.io.File.copy(src, iconPath);
 		}
+	}
 
-		menuPath = haxe.io.Path.join([js.Node.__dirname, TRAY_DIR_NAME, 'menu_tpl.json']);
+	static function copyAbout() {
+		var options = {
+			width: 200,
+			color: {
+				dark: '#974493',
+				light: '#0000'
+			}
+		};
+		var qrPath = haxe.io.Path.join([trayDir, 'qr.png']);
 
+		QrCode.toFile(qrPath, address, options, (err) -> {
+			Log.error('Error creating the QR code in $qrPath: $err');
+		});
 		var aboutFilename = 'about.json';
 		var aboutContent = sys.io.File.getContent(haxe.io.Path.join([js.Node.__dirname, TRAY_DIR_NAME, 'about_tpl.json']));
+		aboutContent = CoreLoc.localizeAll(aboutContent);
 		aboutContent = aboutContent.replace('::version::', Ideckia.CURRENT_VERSION);
+		aboutContent = aboutContent.replace('::address::', address);
+		aboutContent = aboutContent.replace('::qr_path::', 'file://$qrPath');
+		aboutContent = aboutContent.replace('::startup_checked::', showAboutOnStartup ? 'true' : 'false');
 		aboutDialogPath = haxe.io.Path.join([trayDir, aboutFilename]);
 		Log.info('Copying "about" dialog [$aboutFilename] to $aboutDialogPath');
 		sys.io.File.saveContent(aboutDialogPath, aboutContent);

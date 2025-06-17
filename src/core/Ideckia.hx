@@ -88,13 +88,14 @@ class Ideckia {
 		CoreLoc.init();
 
 		Chokidar.watch(getApproposPath()).on('change', (_, _) -> {
-			Log.info('Realoading app.props info...');
+			Log.info('Reloading app.props info...');
 			Appropos.init(getApproposPath());
+			Config.createConfigDialogData();
 		});
 
 		var wsServer = new WebSocketServer();
 
-		Tray.show();
+		Tray.create();
 
 		LayoutManager.load().finally(() -> {
 			LayoutManager.watchForChanges();
@@ -138,7 +139,7 @@ class Ideckia {
 			if (createActionDef.destPath == null || createActionDef.destPath == '')
 				createActionDef.destPath = ActionManager.getActionsPath();
 			ActionManager.creatingNewAction = true;
-			var newActionPath = api.action.creator.ActionCreator.create(createActionDef, Log.info).then(newActionPath -> {
+			api.action.creator.ActionCreator.create(createActionDef, Log.info).then(newActionPath -> {
 				ActionManager.creatingNewAction = false;
 				resolve(newActionPath);
 			}).catchError(error -> {

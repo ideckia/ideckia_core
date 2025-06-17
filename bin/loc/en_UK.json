@@ -436,8 +436,40 @@
 		"text": "STATES"
 	},
 	{
-		"id": "tray_ideckia_port",
-		"text": "ideckia port:"
+		"id": "about_ideckia",
+		"text": "About ideckia"
+	},
+	{
+		"id": "about_ideckia_address",
+		"text": "ideckia address:"
+	},
+	{
+		"id": "about_scan_qr_description",
+		"text": "Scan the QR code below with the mobile app to connect."
+	},
+	{
+		"id": "about_code_text",
+		"text": "Here you can find the code of all the Ideckia project"
+	},
+	{
+		"id": "about_issues_text",
+		"text": "If you have any problems or issues, please report them here:"
+	},
+	{
+		"id": "about_report_issue",
+		"text": "Report an issue"
+	},
+	{
+		"id": "about_created_by",
+		"text": "Created by Josu Igoa"
+	},
+	{
+		"id": "about_show_startup",
+		"text": "Show this window on startup"
+	},
+	{
+		"id": "tray_connection_info",
+		"text": "connection info"
 	},
 	{
 		"id": "tray_open",
@@ -456,12 +488,20 @@
 		"text": "logs"
 	},
 	{
+		"id": "tray_open_conf",
+		"text": "configuration"
+	},
+	{
 		"id": "tray_about",
 		"text": "about"
 	},
 	{
 		"id": "tray_quit",
 		"text": "quit"
+	},
+	{
+		"id": "configuration_title",
+		"text": "configuration"
 	},
 	{
 		"id": "action_tooltip_name",
