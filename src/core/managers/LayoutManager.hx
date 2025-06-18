@@ -73,8 +73,8 @@ class LayoutManager {
 			return;
 
 		Chokidar.watch(getLayoutPath()).on('change', (_, _) -> {
-			ActionManager.unloadActions();
 			Log.info('Layout file changed, reloading...');
+			ActionManager.unloadActions();
 			load().finally(() -> MsgManager.sendToAll(LayoutManager.currentDirForClient()));
 		});
 
