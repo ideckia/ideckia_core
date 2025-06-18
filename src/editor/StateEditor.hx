@@ -158,11 +158,12 @@ class StateEditor {
 								}
 
 								var actionDefaultProps = {};
-								var defValue;
+								var defValue, type;
 								if (actionDescriptor.props != null) {
 									for (p in actionDescriptor.props) {
 										defValue = (p.defaultValue == null) ? null : p.defaultValue.replace('"', '').replace("'", '');
-										if (p.type != null && p.type == PropEditorFieldType.boolean)
+										type = PropEditorFieldType.fromTypeName(p.name, p.type);
+										if (type == PropEditorFieldType.boolean)
 											Reflect.setField(actionDefaultProps, p.name, defValue == 'true');
 										else
 											Reflect.setField(actionDefaultProps, p.name, defValue);
