@@ -253,7 +253,7 @@ class ActionEditor {
 			http.addHeader('Content-Type', 'application/json');
 			http.onError = (e) -> {
 				if (action.enabled)
-					js.Browser.alert(Utils.formatString('::alert_error_action_desc::', [Std.string(action.id), e]));
+					trace(Utils.formatString('::alert_error_action_desc::', [Std.string(action.id), e]));
 				switch App.getActionDescriptorByName(action.name) {
 					case None:
 						trace('Descriptor not found for [${action.name}]');
