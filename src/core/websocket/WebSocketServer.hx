@@ -28,7 +28,10 @@ class WebSocketServer {
 
 	var ws:WebSocketServerJs;
 
+	static var ipAddress:String;
+
 	public function new() {
+		ipAddress = null;
 		var server = js.node.Http.createServer(function(request, response) {
 			handleRequest(request).then(res -> {
 				response.writeHead(res.code, res.headers);
@@ -40,11 +43,13 @@ class WebSocketServer {
 		});
 
 		server.listen(port, () -> {
-			var banner = haxe.Resource.getString('banner');
-			banner = banner.replace('::version::', Ideckia.CURRENT_VERSION);
-			banner = banner.replace('::buildDate::', Macros.buildDate().toString());
-			banner = banner.replace('::address::', '${getIPAddress()}:$port');
-			Log.raw(banner);
+			getIPAddress().then(ip -> {
+				var banner = haxe.Resource.getString('banner');
+				banner = banner.replace('::version::', Ideckia.CURRENT_VERSION);
+				banner = banner.replace('::buildDate::', Macros.buildDate().toString());
+				banner = banner.replace('::address::', '$ip:$port');
+				Log.raw(banner);
+			});
 		});
 
 		ws = new WebSocketServerJs({
@@ -279,14 +284,27 @@ class WebSocketServer {
 	public dynamic function onClose(connection:WebSocketConnection, reasonCode:Int, description:String):Void {}
 
 	static public function getIPAddress() {
-		var interfaces = Os.networkInterfaces();
-		for (iface in interfaces) {
-			for (alias in iface) {
-				if (alias.family == 'IPv4' && alias.address.startsWith('192'))
-					return alias.address;
+		return new js.lib.Promise((resolve, reject) -> {
+			if (ipAddress != null) {
+				resolve(ipAddress);
+				return;
 			}
-		}
-		return '0.0.0.0';
+
+			var t = new haxe.Timer(1000);
+			t.run = () -> {
+				var interfaces = Os.networkInterfaces();
+				for (iface in interfaces) {
+					for (alias in iface) {
+						if (alias.family == 'IPv4' && alias.address.startsWith('192')) {
+							ipAddress = alias.address;
+							resolve(ipAddress);
+							t.stop();
+							return;
+						}
+					}
+				}
+			}
+		});
 	}
 }
 

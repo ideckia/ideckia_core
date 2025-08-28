@@ -144,13 +144,14 @@ class Tray {
 			sys.FileSystem.createDirectory(trayDir);
 
 		menuPath = haxe.io.Path.join([js.Node.__dirname, TRAY_DIR_NAME, 'menu_tpl.json']);
-		address = '${WebSocketServer.getIPAddress()}:$port';
-
 		copyTrayExecutable();
 		copyIcon();
-		copyAbout();
-
 		Config.createConfigDialogData();
+
+		WebSocketServer.getIPAddress().then(ip -> {
+			address = '$ip:$port';
+			copyAbout();
+		});
 	}
 
 	static function copyTrayExecutable() {
