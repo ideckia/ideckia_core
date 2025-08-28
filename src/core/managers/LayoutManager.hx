@@ -5,9 +5,9 @@ import haxe.ds.Option;
 import tink.Json.parse as tinkJsonParse;
 import tink.Json.stringify as tinkJsonStringify;
 
+using StringTools;
 using api.IdeckiaApi;
 using api.internal.CoreApi;
-using StringTools;
 
 class LayoutManager {
 	@:v('ideckia.layout-file-path:layout.json')
@@ -16,7 +16,7 @@ class LayoutManager {
 	static var actionsLoadTimeoutMs:UInt;
 
 	public static var layout:Layout;
-	public static var previousDir:Dir;
+	static var dirStack:Array<DirName>;
 	public static var currentDir:Dir;
 	static var currentDirName:DirName = new DirName(MAIN_DIR_ID);
 	static var isWatching:Bool = false;
@@ -62,6 +62,7 @@ class LayoutManager {
 	}
 
 	public static function load():js.lib.Promise<Bool> {
+		dirStack = [];
 		readLayout();
 		addIds();
 		changeDir(currentDirName);
@@ -400,22 +401,33 @@ class LayoutManager {
 	}
 
 	public static function gotoPreviousDir():js.lib.Promise<Bool> {
-		return if (previousDir != null) {
-			changeDir(previousDir.name);
+		final prevDirName = dirStack.pop();
+		if (prevDirName != null) {
+			if (prevDirName.toString().startsWith(DYNAMIC_DIRECTORY_PREFIX)) {
+				final itemId = Std.parseInt(prevDirName.toString().replace(DYNAMIC_DIRECTORY_PREFIX, ''));
+				@:privateAccess ClientManager.onItemClick(new ItemId(itemId), false);
+				return js.lib.Promise.resolve(true);
+			} else {
+				return changeDir(prevDirName, true);
+			}
 		} else {
-			gotoMainDir();
+			return gotoMainDir();
 		}
 	}
 
-	public static function changeDir(dirName:DirName):js.lib.Promise<Bool> {
+	public static function changeDir(dirName:DirName, addToStack:Bool = true):js.lib.Promise<Bool> {
 		if (layout == null) {
 			throw new haxe.Exception('There is no loaded layout. Call LayoutManager.load() first.');
 		}
 
 		return new js.lib.Promise((resolve, reject) -> {
-			function _changeDir(newDir:Dir) {
+			function _doChangeDir(newDir:Dir) {
 				LayoutManager.hideCurrentItems();
-				previousDir = currentDir;
+				if (addToStack && currentDir != null) {
+					dirStack.push(currentDir.name);
+					while (dirStack.length > 10)
+						dirStack.shift();
+				}
 				currentDir = newDir;
 				currentDirName = currentDir.name;
 				LayoutManager.showCurrentItems().finally(() -> resolve(true));
@@ -429,13 +441,13 @@ class LayoutManager {
 				var firstDirName = firstDir.name;
 				Log.error('Could not find dir with name [$dirName]. Loading [$firstDirName] directory.');
 				Ideckia.dialog.error('Error switching directory', 'Could not find dir with name [$dirName]. Loading [$firstDirName] directory.');
-				_changeDir(firstDir);
+				_doChangeDir(firstDir);
 				return;
 			} else if (foundLength > 1) {
 				Log.error('Found $foundLength dirs with name [$dirName]');
 			}
 
-			_changeDir(foundDirs[0]);
+			_doChangeDir(foundDirs[0]);
 		});
 	}
 
