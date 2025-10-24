@@ -100,13 +100,15 @@ class Utils {
 		switch clone.kind {
 			case ChangeDir(_, state):
 				state.id = getNextStateId();
-				for (a in state.actions)
-					a.id = null;
+				if (state.actions != null)
+					for (a in state.actions)
+						a.id = null;
 			case States(_, list):
 				for (s in list) {
 					s.id = getNextStateId();
-					for (a in s.actions)
-						a.id = null;
+					if (s.actions != null)
+						for (a in s.actions)
+							a.id = null;
 				}
 		}
 

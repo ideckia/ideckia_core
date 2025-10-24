@@ -1,9 +1,8 @@
-import js.html.DragEvent;
 import api.internal.CoreApi;
 import hx.Selectors.Cls;
 import hx.Selectors.Id;
+import js.html.DragEvent;
 import js.html.Element;
-import js.html.Event;
 import js.html.InputElement;
 import js.html.SelectElement;
 
@@ -132,8 +131,8 @@ class DirEditor {
 				// copy item
 				var targetItem = currentDir.items[targetIndex];
 				if (targetItem.kind != null) {
-					js.Browser.alert('::alert_target_item_not_empty::');
-					return;
+					if (!js.Browser.window.confirm('::alert_target_item_not_empty::'))
+						return;
 				}
 				targetItem.kind = Utils.cloneItemKind(currentDir.items[itemToMoveIndex]);
 			} else {

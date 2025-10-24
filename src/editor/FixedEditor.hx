@@ -1,7 +1,7 @@
-import js.html.Element;
-import js.html.Event;
 import hx.Selectors.Cls;
 import hx.Selectors.Id;
+import js.html.DragEvent;
+import js.html.Element;
 
 class FixedEditor {
 	static var draggingItemId:UInt;
@@ -42,20 +42,20 @@ class FixedEditor {
 		draggingItemId = Std.parseInt(itemId);
 	}
 
-	static function onDragOver(e:Event) {
+	static function onDragOver(e:DragEvent) {
 		e.preventDefault();
 		var targetElement = cast(e.currentTarget, Element);
 		if (!targetElement.classList.contains(Cls.drag_over))
 			targetElement.classList.add(Cls.drag_over);
 	}
 
-	static function onDragLeave(e:Event) {
+	static function onDragLeave(e:DragEvent) {
 		e.preventDefault();
 		var targetElement = cast(e.currentTarget, Element);
 		targetElement.classList.remove(Cls.drag_over);
 	}
 
-	static function onDrop(e:Event) {
+	static function onDrop(e:DragEvent) {
 		for (d in Cls.drag_over.get())
 			d.classList.remove(Cls.drag_over);
 		var targetItemId = Std.parseInt(cast(e.currentTarget, Element).dataset.item_id);
@@ -75,10 +75,26 @@ class FixedEditor {
 		}
 
 		if (itemToMoveIndex != -1 && targetIndex != -1) {
-			var itemToMove = items.splice(itemToMoveIndex, 1)[0];
-			items.insert(targetIndex, itemToMove);
+			if (e.ctrlKey) {
+				// copy item
+				var targetItem = items[targetIndex];
+				if (targetItem.kind != null) {
+					if (!js.Browser.window.confirm('::alert_target_item_not_empty::'))
+						return;
+				}
+				targetItem.kind = Utils.cloneItemKind(items[itemToMoveIndex]);
+			} else {
+				// move item
+				var itemToMove = items.splice(itemToMoveIndex, 1)[0];
+				items.insert(targetIndex, itemToMove);
+			}
 			App.dirtyData = true;
-			show();
+			refresh();
 		}
+	}
+
+	public static function refresh() {
+		Utils.removeListeners(listeners);
+		show();
 	}
 }
