@@ -440,12 +440,12 @@
 		"text": "ideckiari buruz"
 	},
 	{
-		"id": "about_ideckia_address",
-		"text": "ideckia helbidea:"
+		"id": "about_scan_qr_description",
+		"text": "Eskaneatu beheko QR hau bezeroa irekitzeko."
 	},
 	{
-		"id": "about_scan_qr_description",
-		"text": "Eskaneatu beheko QR hau mugikorreko aplikazioarekin zuzenean konektatzeko."
+		"id": "about_pc_client_description",
+		"text": "Edo klikatu azpiko lotura honetan ordenagailuan bertan irekitzeko."
 	},
 	{
 		"id": "about_code_text",

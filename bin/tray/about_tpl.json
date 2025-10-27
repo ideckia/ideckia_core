@@ -2,17 +2,12 @@
 	"title": "::about_ideckia::",
 	"window_size": [
 		450,
-		550
+		600
 	],
 	"body": [
 		{
 			"label": {
 				"text": "Ideckia core ::version::"
-			}
-		},
-		{
-			"label": {
-				"text": "::about_ideckia_address:: ::address::"
 			}
 		},
 		{
@@ -24,6 +19,17 @@
 			"image": {
 				"id": "qr_address",
 				"path": "::qr_path::"
+			}
+		},
+		{
+			"label": {
+				"text": "::about_pc_client_description::"
+			}
+		},
+		{
+			"link": {
+				"label": "::client_address::",
+				"url": "::client_address::"
 			}
 		},
 		{
