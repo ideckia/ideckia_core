@@ -172,7 +172,8 @@ class ActionManager {
 			if (creatingNewAction)
 				return;
 			var fileName = haxe.io.Path.withoutDirectory(path);
-			if (fileName.startsWith('__'))
+			Log.info('Change detected in [$fileName] file.');
+			if (fileName.startsWith('__') || fileName.startsWith('.'))
 				return;
 
 			actionDescriptors = null;
