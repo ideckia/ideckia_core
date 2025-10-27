@@ -361,7 +361,7 @@
 	},
 	{
 		"id": "alert_target_item_not_empty",
-		"text": "Item bat bikoizterakoan, helburuak hutsik egon behar du."
+		"text": "Helburu elementua ez dago hutsik. Ziur zaude gainidatzi nahi duzula?"
 	},
 	{
 		"id": "show_password",
@@ -518,5 +518,25 @@
 	{
 		"id": "action_tooltip_description",
 		"text": "Deskribapena : {0}"
+	},
+	{
+		"id": "rotate_to_horizontal",
+		"text": "Biratu gailua horizontalean jartzeko, mesedez."
+	},
+	{
+		"id": "better_exp_fullscreen",
+		"text": "Ahalik eta esperientzia onena izateko pantaila osoa izatea gomendatzen da. Pantaila osoa gaitu nahi duzu?"
+	},
+	{
+		"id": "no_connection",
+		"text": "Ezin izan da ideckia-rekin konektatu."
+	},
+	{
+		"id": "yes",
+		"text": "Bai"
+	},
+	{
+		"id": "no",
+		"text": "Ez"
 	}
 ]

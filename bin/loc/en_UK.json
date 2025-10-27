@@ -361,7 +361,7 @@
 	},
 	{
 		"id": "alert_target_item_not_empty",
-		"text": "When duplicating an item, the destination must be empty."
+		"text": "The destination is not empty. Are you sure you want to overwrite the contents?"
 	},
 	{
 		"id": "show_password",
@@ -518,5 +518,25 @@
 	{
 		"id": "action_tooltip_description",
 		"text": "Description : {0}"
+	},
+	{
+		"id": "rotate_to_horizontal",
+		"text": "Rotate the device to horizontal, please."
+	},
+	{
+		"id": "better_exp_fullscreen",
+		"text": "For a better experience is recommended to enable fullscreen. Do you want to enable it?"
+	},
+	{
+		"id": "no_connection",
+		"text": "Could not connect to ideckia."
+	},
+	{
+		"id": "yes",
+		"text": "Yes"
+	},
+	{
+		"id": "no",
+		"text": "No"
 	}
 ]

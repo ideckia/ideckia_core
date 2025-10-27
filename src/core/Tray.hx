@@ -200,7 +200,7 @@ class Tray {
 		};
 		var qrPath = haxe.io.Path.join([trayDir, 'qr.png']);
 
-		QrCode.toFile(qrPath, address, options, (err) -> {
+		QrCode.toFile(qrPath, '$address/client', options, (err) -> {
 			Log.error('Error creating the QR code in $qrPath: $err');
 		});
 		var aboutFilename = 'about.json';

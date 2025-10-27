@@ -21,6 +21,7 @@
 		"assets": [
 			"bin/tray/*",
 			"bin/editor/*",
+			"bin/client/*",
 			"bin/loc/*"
 		]
 	}

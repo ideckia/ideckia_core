@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PKG_NODE_VERSION: 16
-      NODE_VERSION: 16
+      NODE_VERSION: 22
       HAXE_VERSION: 4.3.0
       JS_VERSION_NAME: ideckia-js
       PKG_ARGS: --no-bytecode --public --public-packages '*' --compress Brotli --debug
@@ -70,14 +70,24 @@ jobs:
         fileName: "ideckia_tray_macos"
         out-file-path: "bin/tray"
 
+    - name: Generate client files
+      run: |
+        cd client
+        npm install
+        npm run build
+        cp dist/assets/index-*.css ../bin/client/style.css
+        cp dist/assets/index-*.js ../bin/client/app.js
+
     - name: Install pkg
       run: npm i -g pkg@5.8.0
     
     - name: Package with pkg
       run: |
+        mkdir -p ${{ env.JS_VERSION_NAME }}/client
         mkdir -p ${{ env.JS_VERSION_NAME }}/editor
         cp package.json ${{ env.JS_VERSION_NAME }}
         cp bin/ideckia.js ${{ env.JS_VERSION_NAME }}
+        cp -r bin/client/* ${{ env.JS_VERSION_NAME }}/client
         cp -r bin/editor/* ${{ env.JS_VERSION_NAME }}/editor
         zip -r ${{ env.JS_VERSION_NAME }} ${{ env.JS_VERSION_NAME }}
         pkg . --targets node${{ env.PKG_NODE_VERSION }}-linux,node${{ env.PKG_NODE_VERSION }}-win,node${{ env.PKG_NODE_VERSION }}-macos ${{ env.PKG_ARGS }}

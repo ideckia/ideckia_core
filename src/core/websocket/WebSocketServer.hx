@@ -12,10 +12,12 @@ import js.node.Os;
 
 using StringTools;
 
+typedef HttpHeaders = haxe.DynamicAccess<String>;
+
 typedef HttpResponse = {
 	var code:Int;
 	var ?readStream:ReadStream;
-	var headers:haxe.DynamicAccess<String>;
+	var headers:HttpHeaders;
 	var ?body:String;
 }
 
@@ -98,43 +100,11 @@ class WebSocketServer {
 						body: haxe.Json.stringify({pong: Os.hostname()})
 					});
 				} else if (requestUrl.indexOf(editorEndpoint) != -1
+					|| requestUrl.indexOf(clientEndpoint) != -1
 					|| requestUrl.endsWith('.js')
 					|| requestUrl.endsWith('.css')
 					|| requestUrl.endsWith('icon.png')) {
-					var relativePath = if (requestUrl.endsWith(editorEndpoint)) {
-						'$editorEndpoint/index.html';
-					} else if (requestUrl.endsWith('icon.png')) {
-						'icon.png';
-					} else {
-						'$editorEndpoint${requestUrl}';
-					}
-
-					var absolutePath = Ideckia.getAppPath(relativePath);
-					if (!sys.FileSystem.exists(absolutePath) && Ideckia.isPkg()) {
-						absolutePath = js.Node.__dirname + '$relativePath';
-					}
-					var contentType = if (requestUrl.endsWith('icon.png')) {
-						'image/png';
-					} else if (requestUrl.endsWith('.js')) {
-						'text/javascript';
-					} else {
-						'text/' + haxe.io.Path.extension(absolutePath);
-					}
-
-					if (absolutePath.endsWith('.js') || absolutePath.endsWith('.html')) {
-						var localizedBody = CoreLoc.localizeAll(sys.io.File.getContent(absolutePath));
-						resolve({
-							code: 200,
-							headers: headers,
-							body: localizedBody
-						});
-					} else {
-						resolve({
-							code: 200,
-							headers: {"Content-Type": contentType},
-							readStream: Fs.createReadStream(absolutePath)
-						});
-					}
+					returnWeb(requestUrl, headers).then(resolve).catchError(reject);
 				} else if (request.method == 'POST' && requestUrl == newActionEndpoint) {
 					var data = '';
 					request.on('data', chunck -> {
@@ -277,6 +247,51 @@ class WebSocketServer {
 		});
 	}
 
+	function returnWeb(requestUrl:String, headers:HttpHeaders) {
+		return new js.lib.Promise<HttpResponse>((resolve, reject) -> {
+			final endpoint = requestUrl.indexOf(editorEndpoint) != -1 ? editorEndpoint : clientEndpoint;
+
+			if (requestUrl.indexOf(endpoint) != -1 || requestUrl.endsWith('.js') || requestUrl.endsWith('.css') || requestUrl.endsWith('icon.png')) {
+				var relativePath = if (requestUrl.endsWith(endpoint)) {
+					'$endpoint/index.html';
+				} else if (requestUrl.endsWith('icon.png')) {
+					'icon.png';
+				} else {
+					'${requestUrl}';
+				}
+
+				var absolutePath = Ideckia.getAppPath(relativePath);
+				if (!sys.FileSystem.exists(absolutePath) && Ideckia.isPkg())
+					absolutePath = js.Node.__dirname + '$relativePath';
+
+				var contentType = if (requestUrl.endsWith('icon.png')) {
+					'image/png';
+				} else if (requestUrl.endsWith('.js')) {
+					'text/javascript';
+				} else {
+					'text/' + haxe.io.Path.extension(absolutePath);
+				}
+
+				headers.set("Content-Type", contentType);
+
+				if (absolutePath.endsWith('.js') || absolutePath.endsWith('.html')) {
+					var localizedBody = CoreLoc.localizeAll(sys.io.File.getContent(absolutePath));
+					resolve({
+						code: 200,
+						headers: headers,
+						body: localizedBody
+					});
+				} else {
+					resolve({
+						code: 200,
+						headers: {"Content-Type": contentType},
+						readStream: Fs.createReadStream(absolutePath)
+					});
+				}
+			}
+		});
+	}
+
 	public dynamic function onConnect(connection:WebSocketConnection):Void {}
 
 	public dynamic function onMessage(connection:WebSocketConnection, msg:Any):Void {}
@@ -311,5 +326,6 @@ class WebSocketServer {
 @:jsRequire("ws", "WebSocketServer")
 extern class WebSocketServerJs {
 	public function new(options:Dynamic);
+
 	public function on(event:String, fb:Dynamic):Void;
 }
