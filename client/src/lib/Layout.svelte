@@ -90,12 +90,14 @@
         log("closed");
         socketConnected = false;
         if (isMobile) releaseWakeLock();
+        screenfull.exit();
     };
     socket.onerror = (err) => {
         log("error");
         console.error(err);
         socketConnected = false;
         if (isMobile) releaseWakeLock();
+        screenfull.exit();
     };
 
     function gotoDir(toDir) {
