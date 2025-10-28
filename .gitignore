@@ -1,6 +1,9 @@
 actions/**
 logs/**
 node_modules/*
+client/node_modules/*
+client/dist/*
+client/public/*
 bin/ideckia.js
 ideckia-*
 *.exe
@@ -8,4 +11,6 @@ layout.json
 app.props
 gen.readme.md
 bin/editor/app.js
+bin/client/app.js
+bin/client/style.css
 test_core/*
