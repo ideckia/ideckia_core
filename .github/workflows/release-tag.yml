@@ -10,8 +10,8 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      PKG_NODE_VERSION: 16
-      NODE_VERSION: 22
+      PKG_NODE_VERSION: 24
+      NODE_VERSION: 24
       HAXE_VERSION: 4.3.0
       JS_VERSION_NAME: ideckia-js
       PKG_ARGS: --no-bytecode --public --public-packages '*' --compress Brotli
@@ -79,7 +79,7 @@ jobs:
         cp dist/assets/index-*.js ../bin/client/app.js
 
     - name: Install pkg
-      run: npm i -g pkg@5.8.0
+      run: npm install -g @yao-pkg/pkg
 
     - name: Package with pkg
       run: |
