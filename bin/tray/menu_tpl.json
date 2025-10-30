@@ -11,8 +11,7 @@
 			"menu": [
 				{
 					"id": "client",
-					"text": "::tray_open_client::",
-					"disabled": ::client_disabled::
+					"text": "::tray_open_client::"
 				},
 				{
 					"id": "editor",

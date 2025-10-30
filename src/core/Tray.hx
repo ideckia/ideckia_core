@@ -11,10 +11,6 @@ class Tray {
 	static var menuPath = '';
 	static var aboutDialogPath = '';
 
-	@:v('ideckia.client-path')
-	static var clientPath:String;
-	static var clientFullPath:String;
-
 	@:v('ideckia.port:8888')
 	static public var port:Int;
 
@@ -39,7 +35,6 @@ class Tray {
 
 		var menuDefContent = sys.io.File.getContent(menuPath);
 		menuDefContent = menuDefContent.replace('::icon_path::', iconPath);
-		menuDefContent = menuDefContent.replace('::client_disabled::', (sys.FileSystem.exists(clientFullPath)) ? '0' : '1');
 		var menuDef:MenuDef = haxe.Json.parse(CoreLoc.localizeAll(menuDefContent));
 
 		menuDefContent = haxe.Json.stringify(menuDef).replace('"', '\\"');
@@ -52,19 +47,16 @@ class Tray {
 			var isClient = out.startsWith('client');
 			if (isEditor || isClient) {
 				var launchCmd = switch Sys.systemName() {
-					case "Linux": (isClient) ? '' : 'xdg-open';
+					case "Linux": 'xdg-open';
 					case "Mac": 'open';
 					case "Windows": 'start';
 					case _: '';
 				};
 
-				var launchApp = if (isEditor) {
-					'http://localhost:${port}/editor';
-				} else {
-					clientFullPath + ' $port';
-				}
+				var endpoint = (isEditor) ? 'editor' : 'client';
+				var url = 'http://localhost:${port}/$endpoint';
 				Log.debug('Opening ${out}');
-				js.node.ChildProcess.spawn('$launchCmd $launchApp', {shell: true});
+				js.node.ChildProcess.spawn('$launchCmd $url', {shell: true});
 			} else if (out.startsWith('about')) {
 				showAboutDialog();
 			} else if (out.startsWith('config')) {
@@ -127,14 +119,6 @@ class Tray {
 	**/
 	@:noCompletion
 	public static function init() {
-		clientFullPath = if (clientPath == null) {
-			null;
-		} else if (js.node.Path.isAbsolute(clientPath)) {
-			clientPath;
-		} else {
-			Ideckia.getAppPath(clientPath);
-		}
-
 		if (!Ideckia.isPkg())
 			return;
 
