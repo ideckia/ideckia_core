@@ -136,7 +136,7 @@
     }
 </script>
 
-<main id="layout">
+<main id="layout" style:display={socketConnected ? "flex" : "block"}>
     {#if socketConnected}
         <div
             id="items"
@@ -174,7 +174,24 @@
             </div>
         {/if}
     {:else}
-        <div>::no_connection::</div>
+        <svg id="no_connection" width="190" height="160">
+            <path
+                d="M 10 60 q 85 -70 170 0 M 30 80 q 65 -55 130 0 M 50 100 q 45 -40 90 0"
+                stroke="black"
+                stroke-width="8"
+                fill="none"
+            />
+            <circle cx="95" cy="125" r="10" fill="black" />
+            <line
+                x1="40"
+                y1="20"
+                x2="140"
+                y2="130"
+                stroke="red"
+                stroke-width="2"
+            />
+        </svg>
+        <p>::no_connection::</p>
     {/if}
 </main>
 
