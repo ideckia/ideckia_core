@@ -1,17 +1,12 @@
 <script>
     import Layout from "./lib/Layout.svelte";
     import { innerWidth, innerHeight } from "svelte/reactivity/window";
-    import { isDev } from "./lib/utils";
     import screenfull from "screenfull";
 
-    let isFullscreen = $state(screenfull.isFullscreen);
-    screenfull.on("change", () => (isFullscreen = screenfull.isFullscreen));
     let fullscreenUserDecisionMade = $state(false);
 
     window.oncontextmenu = (_) => false;
-    const screenWidth = $derived(innerWidth.current);
-    const screenHeight = $derived(innerHeight.current);
-    const isVertical = $derived(screenWidth < screenHeight);
+    const isVertical = $derived(innerWidth.current < innerHeight.current);
 
     function fullscreenDecision(goFullscreen) {
         if (goFullscreen) screenfull.request();

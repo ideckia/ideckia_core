@@ -1,3 +1,5 @@
+<svelte:options customElement="ideckia-layout" />
+
 <script>
     import Item from "./Item.svelte";
     import { innerWidth, innerHeight } from "svelte/reactivity/window";
@@ -6,6 +8,15 @@
     import { initSwipeListeners } from "./gestures/swipe.js";
     import { initMultiTap } from "./gestures/multiTap.js";
     import screenfull from "screenfull";
+    import { createEventDispatcher } from "svelte";
+
+    let {
+        width = innerWidth.current,
+        height = innerHeight.current,
+        callServer = "true",
+    } = $props();
+
+    const dispatch = createEventDispatcher();
 
     let isFullscreen = $state(screenfull.isFullscreen);
     screenfull.on("change", () => (isFullscreen = screenfull.isFullscreen));
@@ -22,24 +33,19 @@
     let columnsArray = $derived(Array(layout.columns).fill(false));
     let socketConnected = $state(false);
 
-    const screenWidth = $derived(innerWidth.current);
-    const screenHeight = $derived(innerHeight.current);
-
     const showFixedItems = $derived(layout.fixedItems.length > 0);
     var itemsPercentage = 0.85;
     var fixedPercentage = 0.15;
 
-    const fixedContainerWidth = $derived(screenWidth * fixedPercentage);
+    const fixedContainerWidth = $derived(width * fixedPercentage);
     const fixedButtonSize = $derived(fixedContainerWidth * 0.85);
 
     let itemsContainerWidth = $derived(
-        showFixedItems ? screenWidth * itemsPercentage : screenWidth,
+        showFixedItems ? width * itemsPercentage : width,
     );
     const itemButtonSize = $derived(
-        Math.min(
-            itemsContainerWidth / layout.columns,
-            screenHeight / layout.rows,
-        ) * 0.9,
+        Math.min(itemsContainerWidth / layout.columns, height / layout.rows) *
+            0.9,
     );
     let htmlBgColor = $derived.by(() => {
         if (layout.bgColor == "" || layout.bgColor == undefined)
@@ -126,24 +132,34 @@
             return;
         }
 
-        socket.send(
-            JSON.stringify({
-                type: isLongPress ? "longPress" : "click",
-                whoami: "client",
-                itemId: itemId,
-            }),
-        );
+        dispatch("onItemClick", {
+            itemId: itemId,
+        });
+
+        if (callServer == "true")
+            socket.send(
+                JSON.stringify({
+                    type: isLongPress ? "longPress" : "click",
+                    whoami: "client",
+                    itemId: itemId,
+                }),
+            );
     }
 </script>
 
-<main id="layout" style:display={socketConnected ? "flex" : "block"}>
+<main
+    id="layout"
+    style:display={socketConnected ? "flex" : "block"}
+    style:max-width="{width}px"
+    style:max-height="{height}px"
+>
     {#if socketConnected}
         <div
             id="items"
             style:background-color="#{htmlBgColor}"
             style:grid={gridCssValue}
             style:flex={layout.columns}
-            style:height="{screenHeight}px"
+            style:height="{height}px"
         >
             {#each rowsArray, i}
                 {#each columnsArray, j}
@@ -160,7 +176,7 @@
             <div
                 id="fixed-items"
                 style:flex="0 0 {fixedContainerWidth}px"
-                style:height="{screenHeight - 10}px"
+                style:height="{height - 10}px"
             >
                 {#each layout.fixedItems as fItem}
                     <Item
