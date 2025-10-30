@@ -525,7 +525,7 @@
 	},
 	{
 		"id": "better_exp_fullscreen",
-		"text": "For a better experience is recommended to enable fullscreen. Do you want to enable it?"
+		"text": "Fullscreen is recommended. Do you want to enable it?"
 	},
 	{
 		"id": "no_connection",
