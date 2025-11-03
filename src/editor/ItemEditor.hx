@@ -141,11 +141,11 @@ class ItemEditor {
 
 		if (icon == "" || icon == null)
 			return "";
-		final iconData = switch Utils.getIconIndexByName(state.icon) {
+		var iconData = switch Utils.getIconIndexByName(state.icon) {
 			case Some(index):
-				Utils.defaultBase64Prefix(App.icons[index].base64);
+				App.icons[index].base64;
 			case None:
-				Utils.defaultBase64Prefix(state.icon);
+				state.icon;
 		};
 		if (iconData == null) {
 			final iconUrl = !icon.contains("base64,") ? "data:image/png;base64," + icon : icon;
@@ -153,9 +153,12 @@ class ItemEditor {
 		}
 
 		if (iconData.contains("<svg")) {
-			var b64 = js.Syntax.code("encodeURIComponent({0}.replace(~/<\\?xml.+\\?>|<!DOCTYPE.+]>/g,
-				''),).replace(~/%20/g, ' ').replace(~/%3D/g, '=').replace(~/%3A/g, ':').replace(~/%2F/g, '/').replace(~/%22/g, \"'\");", iconData);
-			return 'url("data:image/svg+xml;charset=utf-8,' + b64 + '")';
+			iconData = ~/\\<\\?xml.+\\?\\>|\\<\\!DOCTYPE.+]\\>/g.replace(iconData, ' ');
+			iconData = ~/%3D/g.replace(iconData, '=');
+			iconData = ~/%3A/g.replace(iconData, ':');
+			iconData = ~/%2F/g.replace(iconData, '/');
+			iconData = ~/%22/g.replace(iconData, "'");
+			return 'url("data:image/svg+xml;charset=utf-8,' + iconData.urlEncode() + '")';
 		}
 
 		final iconUrl = !iconData.contains("base64,") ? "data:image/png;base64," + iconData : iconData;
