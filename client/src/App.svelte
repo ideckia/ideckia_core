@@ -5,8 +5,11 @@
 
     let fullscreenUserDecisionMade = $state(false);
 
+    let width = $derived(innerWidth.current);
+    let height = $derived(innerHeight.current);
+
     window.oncontextmenu = (_) => false;
-    const isVertical = $derived(innerWidth.current < innerHeight.current);
+    const isVertical = $derived(width < height);
 
     function fullscreenDecision(goFullscreen) {
         if (goFullscreen) screenfull.request();
@@ -40,7 +43,7 @@
             />
         </svg>
     {:else if fullscreenUserDecisionMade}
-        <Layout />
+        <Layout {width} {height} />
     {:else}
         <svg id="fullscreen_svg" width="200" height="100">
             <clipPath id="mask">

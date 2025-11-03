@@ -24,7 +24,7 @@
 
     let htmlText = $derived.by(() => {
         if (text == "" || text == undefined) return DEFAULT_TEXT;
-        return recursiveRegex(text).replaceAll("\n", "<br/>");
+        return recursiveModificators(text).replaceAll("\n", "<br/>");
     });
 
     let htmlColor = $derived.by(() => {
@@ -75,7 +75,7 @@
     });
 
     const regex = /{(.*)}/gm;
-    function recursiveRegex(text) {
+    function recursiveModificators(text) {
         const matches = text.match(regex);
         if (matches == null) return text;
 
@@ -86,7 +86,7 @@
             );
         });
 
-        return recursiveRegex(text);
+        return recursiveModificators(text);
     }
 
     function processModificators(text) {
