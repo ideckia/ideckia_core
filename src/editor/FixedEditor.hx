@@ -4,6 +4,7 @@ import js.html.DragEvent;
 import js.html.Element;
 
 class FixedEditor {
+	static public inline var FIXED_CONTAINER_HEIGHT = 430;
 	static var draggingItemId:UInt;
 
 	static var listeners:Array<Utils.Listener> = [];
@@ -17,7 +18,7 @@ class FixedEditor {
 		Utils.clearElement(Id.fixed_content.get());
 
 		for (fi in fixedItems) {
-			switch ItemEditor.show(fi, true) {
+			switch ItemEditor.show(fi, 100, true) {
 				case Some(cell):
 					Id.fixed_content.get().append(cell);
 					cell.classList.remove(Cls.draggable_item);
@@ -28,7 +29,7 @@ class FixedEditor {
 		var repetition = (fixedItems.length) > 8 ? 8 : fixedItems.length;
 		var percentage = 100 / repetition;
 
-		Id.fixed_content.get().style.gridTemplateColumns = 'repeat(${fixedItems.length}, $percentage%)';
+		Id.fixed_content.get().style.height = '${FIXED_CONTAINER_HEIGHT}px';
 
 		for (d in Cls.draggable_fixed_item.get()) {
 			Utils.addListener(listeners, d, 'dragstart', (_) -> onDragStart(d.dataset.item_id));

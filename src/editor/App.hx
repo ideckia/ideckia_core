@@ -681,15 +681,6 @@ class App {
 					updateDirsSelect();
 					FixedEditor.show();
 
-				case CoreMsgType.layout:
-					if (!App.dirtyData) {
-						var msg:EditorMsg = {
-							type: EditorMsgType.getEditorData,
-							whoami: editor
-						};
-						websocket.send(haxe.Json.stringify(msg));
-					}
-
 				case _:
 					trace('Unhandled message [${coreData.type}] from core [${haxe.Json.stringify(event)}]');
 			};
@@ -699,26 +690,6 @@ class App {
 			var msg = 'WebSocket connection to "${event.target.url}" failed.';
 			trace(msg);
 			js.Browser.alert(msg);
-		}
-	}
-
-	public static function onItemClick(itemId:UInt) {
-		if (Id.execute_actions_cb.as(InputElement).checked) {
-			websocket.send(haxe.Json.stringify({
-				type: click,
-				whoami: client,
-				itemId: itemId,
-			}));
-		}
-	}
-
-	public static function onItemLongPress(itemId:UInt) {
-		if (Id.execute_actions_cb.as(InputElement).checked) {
-			websocket.send(haxe.Json.stringify({
-				type: longPress,
-				whoami: client,
-				itemId: itemId,
-			}));
 		}
 	}
 

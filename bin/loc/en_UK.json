@@ -16,14 +16,6 @@
 		"text": "append layout"
 	},
 	{
-		"id": "title_client_check",
-		"text": "If activated, clicked states will be executed in the core."
-	},
-	{
-		"id": "label_client_check",
-		"text": "Use as client"
-	},
-	{
 		"id": "add_icon",
 		"text": "add icon"
 	},

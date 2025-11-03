@@ -1,3 +1,6 @@
+import js.html.ButtonElement;
+import js.lib.intl.Collator.Usage;
+import js.lib.RegExp;
 import js.html.Element;
 import js.html.ImageElement;
 import api.internal.CoreApi;
@@ -10,6 +13,8 @@ import js.html.Event;
 import js.html.SelectElement;
 import haxe.ds.Option;
 
+using StringTools;
+
 class ItemEditor {
 	static var editingItem:CoreItem;
 	static var isFixedItem:Bool;
@@ -17,119 +22,144 @@ class ItemEditor {
 	static var listeners:Array<Utils.Listener> = [];
 	static var cellListeners:Array<Utils.Listener> = [];
 
-	public static function show(item:CoreItem, isFixed:Bool = false):Option<Element> {
+	public static function show(item:CoreItem, buttonSize:Float = 100., isFixed:Bool = false):Option<Element> {
 		if (item == null)
 			return None;
 
-		var cell = Utils.cloneElement(Id.layout_grid_item_tpl.get(), DivElement);
+		var cell = Utils.cloneElement(Id.layout_grid_item_tpl.get(), ButtonElement);
 		cell.dataset.item_id = Std.string(item.id.toUInt());
-		var executionCallback:CoreItem->Void = (item) -> {};
-		var longPressCallback:CoreItem->Void = (item) -> {};
 
 		var text = '';
-		var textPosition = Cls.layout_bottom_text;
-		var textColor = 'white';
+		var state = null, defaultClass = null;
 		switch item.kind {
 			case null:
 				text = 'empty';
-			case ChangeDir(_, state):
-				showIcon(cell, state);
+			case ChangeDir(_, s):
+				state = s;
 				text = state.text;
-				textPosition = switch state.textPosition {
-					case top: Cls.layout_top_text;
-					case center: Cls.layout_center_text;
-					default: Cls.layout_bottom_text;
-				}
-				if (state.textColor != null) {
-					textColor = '#' + state.textColor.substr(2);
-				}
-				if (state.bgColor != null) {
-					cell.style.backgroundColor = '#' + state.bgColor.substr(2);
-				} else {
-					cell.classList.add('dir');
-				}
+				defaultClass = 'dir';
 			case States(index, list):
 				if (index == null)
 					index = 0;
-				var state = list[index];
-				showIcon(cell, state);
+				state = list[index];
 				text = state.text;
-				textPosition = switch state.textPosition {
-					case top: Cls.layout_top_text;
-					case center: Cls.layout_center_text;
-					default: Cls.layout_bottom_text;
-				}
-				if (state.textColor != null) {
-					textColor = '#' + state.textColor.substr(2);
-				}
-				if (state.bgColor != null) {
-					cell.style.backgroundColor = '#' + state.bgColor.substr(2);
-				} else {
-					cell.classList.add('states');
-				}
-				executionCallback = (item) -> App.onItemClick(item.id.toUInt());
-				longPressCallback = (item) -> App.onItemLongPress(item.id.toUInt());
+				defaultClass = 'states';
 		};
 
-		switch Cls.item_text_div.firstFrom(cell) {
-			case Some(v):
-				v.classList.add(textPosition);
-			case None:
+		var textPosition = Cls.layout_bottom_text;
+		var bgColor = null;
+		var txtColor = 'white';
+
+		if (state != null) {
+			textPosition = switch state.textPosition {
+				case top:
+					Cls.layout_top_text;
+				case center:
+					Cls.layout_center_text;
+				default:
+					Cls.layout_bottom_text;
+			}
+			txtColor = state.textColor != null ? '#' + state.textColor.substr(2) : 'white';
+			bgColor = (state.bgColor != null) ? cell.style.backgroundColor = '#' + state.bgColor.substr(2) : null;
 		}
 
-		switch Tag.span.firstFrom(cell) {
-			case Some(v):
-				v.innerText = text;
-				v.style.color = textColor;
-			case None:
-				trace('No [${Tag.span.selector()}] found in [${Id.layout_grid_item_tpl.selector()}]');
+		cell.innerHTML = '<span>${recursiveModificators(text)}</span>';
+		cell.style.color = txtColor;
+		cell.style.width = '${buttonSize}px';
+		cell.style.height = '${buttonSize}px';
+		if (bgColor != null) {
+			cell.style.backgroundColor = bgColor;
+		} else if (defaultClass != null) {
+			cell.classList.add(defaultClass);
 		}
+		cell.classList.add(textPosition);
+		cell.style.backgroundImage = getIconUrl(state);
+		cell.style.backgroundSize = '${buttonSize * .5}px';
+		cell.style.borderRadius = '${buttonSize * 0.3}px';
 
 		cell.addEventListener('click', (event:Event) -> {
 			Utils.stopPropagation(event);
 			Utils.selectElement(cell);
 			Utils.hideAllProps();
 
-			executionCallback(item);
 			edit(item, isFixed);
-		});
-		cell.addEventListener('contextmenu', (event:Event) -> {
-			longPressCallback(item);
 		});
 
 		return Some(cell);
 	}
 
-	static function showIcon(cell:DivElement, state:CoreState) {
-		if (state.icon == null)
-			return;
+	static function recursiveModificators(text:String) {
+		final regex = ~/{(.*)}/gm;
+		if (text == null)
+			return '';
+		if (!regex.match(text))
+			return text;
+
+		var modif;
+		while (regex.match(text)) {
+			modif = regex.matched(0);
+			text = text.replace(modif, processModificators(modif.substring(1, modif.length - 1)));
+			modif = modif.substring(1, modif.length - 1);
+		}
+
+		return text;
+	}
+
+	static function processModificators(text:String) {
+		var styleControl = text;
+		var actualText = text;
+
+		var isControl = text.startsWith("b:") || text.startsWith("i:") || text.startsWith("u:") || text.startsWith("color.") || text.startsWith("size.");
+
+		if (isControl) {
+			final colonIndex = text.indexOf(":");
+			styleControl = text.substring(0, colonIndex);
+			actualText = text.substring(colonIndex + 1, text.length);
+		}
+		if (styleControl == "b" || styleControl == "i" || styleControl == "u")
+			return ("<" + styleControl + ">" + actualText + "</" + styleControl + ">");
+		if (styleControl.startsWith("emoji.")) {
+			var emojis = text.replace("emoji.", "").split(",");
+
+			text = "";
+			for (e in emojis)
+				text += "&#" + Std.parseInt('0x' + e.trim()) + ";";
+			return text;
+		}
+		if (styleControl.startsWith("color."))
+			return ('<span style="color:#' + styleControl.replace("color.", "") + '">' + actualText + "</span>");
+		if (styleControl.startsWith("size."))
+			return ('<span style="font-size:' + styleControl.replace("size.", "") + 'px;">' + actualText + "</span>");
+		return text;
+	}
+
+	static function getIconUrl(state:CoreState) {
+		if (state == null || state.icon == null)
+			return "";
 
 		var icon = state.icon;
-		var isSvg = icon.indexOf('<svg') != -1;
 
-		if (!isSvg)
-			icon = switch Utils.getIconIndexByName(state.icon) {
-				case Some(index):
-					Utils.defaultBase64Prefix(App.icons[index].base64);
-				case None:
-					Utils.defaultBase64Prefix(state.icon);
-			};
-
-		if (isSvg) {
-			switch Cls.item_svg_icon.firstFromAs(cell, DivElement) {
-				case Some(cell_icon):
-					cell_icon.classList.remove(Cls.hidden);
-					cell_icon.innerHTML = icon;
-				case None:
-			}
-		} else {
-			switch Cls.item_img_icon.firstFromAs(cell, ImageElement) {
-				case Some(cell_icon):
-					cell_icon.classList.remove(Cls.hidden);
-					cell_icon.src = icon;
-				case None:
-			}
+		if (icon == "" || icon == null)
+			return "";
+		final iconData = switch Utils.getIconIndexByName(state.icon) {
+			case Some(index):
+				Utils.defaultBase64Prefix(App.icons[index].base64);
+			case None:
+				Utils.defaultBase64Prefix(state.icon);
+		};
+		if (iconData == null) {
+			final iconUrl = !icon.contains("base64,") ? "data:image/png;base64," + icon : icon;
+			return 'url("' + iconUrl + '")';
 		}
+
+		if (iconData.contains("<svg")) {
+			var b64 = js.Syntax.code("encodeURIComponent({0}.replace(~/<\\?xml.+\\?>|<!DOCTYPE.+]>/g,
+				''),).replace(~/%20/g, ' ').replace(~/%3D/g, '=').replace(~/%3A/g, ':').replace(~/%2F/g, '/').replace(~/%22/g, \"'\");", iconData);
+			return 'url("data:image/svg+xml;charset=utf-8,' + b64 + '")';
+		}
+
+		final iconUrl = !iconData.contains("base64,") ? "data:image/png;base64," + iconData : iconData;
+		return 'url("' + iconUrl + '")';
 	}
 
 	public static function refresh() {
@@ -200,7 +230,7 @@ class ItemEditor {
 			Id.remove_item_btn.get().classList.add(Cls.hidden);
 		}
 
-		Id.item_container.get().classList.remove(Cls.hidden);
+		Id.item_type_container.get().classList.remove(Cls.hidden);
 		Id.add_state_btn.get().classList.add(Cls.hidden);
 		Id.clear_item_btn.get().classList.add(Cls.hidden);
 		Id.item_kind_changedir_properties.get().classList.add(Cls.hidden);
@@ -266,7 +296,7 @@ class ItemEditor {
 	public static function hide() {
 		editingItem = null;
 		Utils.removeListeners(listeners);
-		Id.item_container.get().classList.add(Cls.hidden);
+		Id.item_type_container.get().classList.add(Cls.hidden);
 		Id.item_kind_changedir_properties.get().classList.add(Cls.hidden);
 	}
 

@@ -22,10 +22,17 @@ class DirEditor {
 		var rows = dir.rows == null ? App.editorData.layout.rows : dir.rows;
 		var columns = dir.columns == null ? App.editorData.layout.columns : dir.columns;
 		var bgColor = dir.bgColor == null ? App.editorData.layout.bgColor : dir.bgColor;
+
+		var itemContainerWidth = js.Browser.window.innerWidth * .3 * .85;
+		var itemContainerHeight = FixedEditor.FIXED_CONTAINER_HEIGHT * .9;
+
+		var itemSize = Math.min(itemContainerWidth / columns, itemContainerHeight / rows) * .9;
+
+		Id.dir_content.get().style.backgroundColor = bgColor == null ? '#616161' : '#' + bgColor.substr(2);
 		for (rind in 0...rows) {
 			for (cind in 0...columns) {
 				var item = dir.items[rind * columns + cind];
-				switch ItemEditor.show(item) {
+				switch ItemEditor.show(item, itemSize) {
 					case Some(cell):
 						Id.dir_content.get().append(cell);
 						cell.classList.remove(Cls.draggable_fixed_item);
@@ -64,11 +71,11 @@ class DirEditor {
 				currentDir.bgColor = 'ff' + bgColorInput.value.substr(1);
 			else
 				currentDir.bgColor = null;
-			App.dirtyData = true;
+			addMissingItems(currentDir);
 		});
 		Utils.addListener(listeners, bgColorInput, 'change', (_) -> {
 			currentDir.bgColor = 'ff' + bgColorInput.value.substr(1);
-			App.dirtyData = true;
+			addMissingItems(currentDir);
 		});
 
 		for (d in Cls.draggable_item.get()) {

@@ -20,15 +20,10 @@
             <input type="button" value="::delete_directory::" id="delete-dir-btn" title="::delete_directory::">
             <input type="button" value="::export_directories::" id="export-dir-btn" title="::export_directories::">
             <input type="button" value="::append_layout::" id="append-layout-btn" title="::append_layout::">
-            <label id="execute-actions-lbl" for="execute-actions-cb" class="menu-right" title="::title_client_check::">
-                ::label_client_check::
-                <input type="checkbox" name="execute-actions" id="execute-actions-cb">
-            </label>
         </menu>
         <menu>
             <input type="button" value="::add_icon::" id="add-icon-btn">
             <input type="button" value="::remove_icon::" id="remove-icon-btn">
-            <input type="button" value="::localize_me::" class="menu-right" id="localize-me-btn">
         </menu>
         <menu>
             <input type="button" value="::add_fixed_item::" id="add-fixed-item-btn">
@@ -44,24 +39,19 @@
             <label for="set-current-bg-color">::background_color::</label>
             <input type="checkbox" id="set-current-bg-color" class="row-column">
             <input type="color" id="current-bg-color" class="row-column">
+            <input type="button" value="::localize_me::" class="menu-right" id="localize-me-btn">
         </menu>
         <div id="main-container">
             <div id="layout-container">
-                <div>
-                    <h3>::directory_items::</h3>
-                    <div id="dir-content"></div>
-                </div>
-                <div>
-                    <h3>::fixed_items::</h3>
-                    <div id="fixed-content"></div>
-                </div>
-                <div id="buttons">
-                    <input type="button" value="::update_layout::" id="update-core-layout-btn" class="hidden">
-                    <span id="layout-updated" class="hidden">::core_layout_updated::</span>
-                </div>
+                <div id="dir-content"></div>
+                <div id="fixed-content"></div>
+            </div>
+            <div id="buttons">
+                <input type="button" value="::update_layout::" id="update-core-layout-btn" class="hidden">
+                <span id="layout-updated" class="hidden">::core_layout_updated::</span>
             </div>
 
-            <div id="item-container" class="hidden">
+            <div id="item-type-container" class="hidden">
                 <h3>::item_properties::</h3>
                 <div id="item-kind-changedir-properties" class="hidden edit-property-container">
                     <h4>::changedir_properties::</h4>
@@ -127,16 +117,9 @@
         </div>
 
         <div id="templates" class="hidden">
-            <div id="layout-grid-item-tpl" draggable="true"
+            <button id="layout-grid-item-tpl" draggable="true"
                 class="layout-grid-item draggable-item draggable-fixed-item">
-                <div class="item-text-div">
-                    <span></span>
-                </div>
-                <div>
-                    <img alt="This is the selected icon preview" src="" class="hidden item-img-icon icon" />
-                    <div alt="This is the selected icon preview" class="hidden item-svg-icon icon" ></div>
-                </div>
-            </div>
+            </button>
             <li id="state-list-item-tpl" draggable="true" class="state-list-item draggable-state">
                 <span></span>
                 <input type="button" value="+" class="add-action-btn" title="::add_action::">
@@ -153,7 +136,8 @@
             <ul class="hidden"></ul>
             <div id="action-prop-tpl">
                 <span class="prop-name"></span>
-                <span class="show-password hidden">(::show_password:: <input type="checkbox" onclick="pwd_cb_clicked">)</span>
+                <span class="show-password hidden">(::show_password:: <input type="checkbox"
+                        onclick="pwd_cb_clicked">)</span>
                 <input type="text" class="hidden prop-value">
                 <div class="hidden prop-multi-values">
                     <input type="button" value="+" class="add-array-value">

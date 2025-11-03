@@ -10,7 +10,7 @@ select {
 }
 
 menu {
-    width: 45%;
+    width: 35%;
 }
 
 .menu-right {
@@ -39,13 +39,18 @@ menu {
 
 #dir-content {
     display: grid;
+    flex: 0.85;
+    padding: 1em;
 }
 
 #fixed-content {
-    margin-bottom: 1em;
-    padding: 1em;
-    overflow-x: auto;
+    flex: 0.2;
+    padding-left: 1em;
+    overflow: auto scroll;
     display: grid;
+    border-left-color: yellow;
+    border-left-style: solid;
+    background-color: rgb(50, 50, 50);
 }
 
 #dir-content ul,
@@ -55,32 +60,34 @@ li {
 
 #main-container {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    grid-template-rows: 0fr 1fr;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    grid-template-rows: 0fr .8fr;
     gap: 0px 0px;
     grid-template-areas:
-        "layout-container item-container state-properties"
-        "layout-container action-properties action-properties";
+        "layout-container item-type-container action-properties"
+        "buttons state-properties action-properties";
 }
 
-#item-container ul,
+#item-type-container ul,
 li {
     margin-top: .5em;
 }
 
 #layout-container {
-    grid-area: layout-container;
+    display: flex;
     border: gray;
     border-style: dotted;
-    margin-bottom: 1em;
-    padding: 1em;
 }
 
-#item-container {
-    grid-area: item-container;
+#buttons {
+    grid-area: buttons;
+    margin-top: 10px;
+}
+
+#item-type-container {
+    grid-area: item-type-container;
     border: gray;
     border-style: dotted;
-    margin-bottom: 1em;
     padding: 1em;
 }
 
@@ -97,7 +104,6 @@ li {
 .edit-property-container {
     border: gray;
     border-style: dotted;
-    margin-bottom: 1em;
     padding: 1em;
 }
 
@@ -129,11 +135,24 @@ li {
 }
 
 .layout-grid-item {
-    background-color: orange;
+    background-color: #263238;
     border: 1px solid;
     height: 100px;
     cursor: pointer;
     text-align: center;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-color: white;
+    color: white;
+    text-align: justify;
+    vertical-align: top;
+    font-size: 16px;
+    margin: 4px 2px;
+    display: inline-flex;
+    overflow: hidden;
+    justify-content: center;
+    white-space: normal;
+    text-wrap: balance;
 }
 
 .layout-grid-item.dir {
@@ -149,15 +168,15 @@ li {
 }
 
 .layout-top-text {
-    top: 0%;
+    align-items: start;
 }
 
 .layout-center-text {
-    top: 40%;
+    align-items: center;
 }
 
 .layout-bottom-text {
-    top: 70%;
+    align-items: end;
 }
 
 #item-kind-changedir-properties {
@@ -224,7 +243,7 @@ li {
     font-size: 2em;
 }
 
-.create-action-tpl-label{
+.create-action-tpl-label {
     font-size: 1.5em;
     margin-left: 1em;
 }
@@ -289,7 +308,7 @@ input[type="radio"]:parent {
 }
 
 input.row-column {
-    width: 4%;
+    width: 5%;
 }
 
 .prop-name {
@@ -344,6 +363,7 @@ input.row-column {
     top: 3px;
     content: "\2713";
 }
+
 .error-mark:after {
     position: relative;
     top: 3px;
