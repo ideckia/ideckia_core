@@ -31,7 +31,6 @@
     });
     let rowsArray = $derived(Array(layout.rows).fill(false));
     let columnsArray = $derived(Array(layout.columns).fill(false));
-    let socketConnected = $state(false);
 
     const showFixedItems = $derived(layout.fixedItems.length > 0);
     var itemsPercentage = 0.85;
@@ -62,10 +61,15 @@
         return rows.join(" ") + " / " + cols.join(" ");
     });
 
+    function reloadClick(_) {
+        location.reload();
+    }
+
     const host = window.location.host;
 
     const socketUrl = isDev ? "ws://localhost:8888" : "ws://" + host;
     const socket = new WebSocket(socketUrl);
+    let socketConnected = $state(false);
 
     socket.onopen = () => {
         log("Connection opened");
@@ -97,6 +101,10 @@
         socketConnected = false;
         if (isMobile) releaseWakeLock();
         screenfull.exit();
+
+        document
+            .getElementById("no_connection_div")
+            .addEventListener("click", reloadClick, { once: true });
     };
     socket.onerror = (err) => {
         log("error");
@@ -104,6 +112,10 @@
         socketConnected = false;
         if (isMobile) releaseWakeLock();
         screenfull.exit();
+
+        document
+            .getElementById("no_connection_div")
+            .addEventListener("click", reloadClick, { once: true });
     };
 
     function gotoDir(toDir) {
@@ -190,23 +202,25 @@
             </div>
         {/if}
     {:else}
-        <svg id="no_connection" width="190" height="160">
-            <path
-                d="M 10 60 q 85 -70 170 0 M 30 80 q 65 -55 130 0 M 50 100 q 45 -40 90 0"
-                stroke="black"
-                stroke-width="8"
-                fill="none"
-            />
-            <circle cx="95" cy="125" r="10" fill="black" />
-            <line
-                x1="40"
-                y1="20"
-                x2="140"
-                y2="130"
-                stroke="red"
-                stroke-width="2"
-            />
-        </svg>
+        <div id="no_connection_div">
+            <svg id="no_connection" width="150" height="120">
+                <path
+                    d="M 10 40 q 65 -60 130 0 M 30 60 q 45 -45 90 0 M 50 80 q 25 -25 50 0"
+                    stroke="black"
+                    stroke-width="8"
+                    fill="none"
+                />
+                <circle cx="75" cy="100" r="10" fill="black" />
+                <line
+                    x1="30"
+                    y1="15"
+                    x2="110"
+                    y2="100"
+                    stroke="red"
+                    stroke-width="2"
+                />
+            </svg>
+        </div>
         <p>::no_connection::</p>
     {/if}
 </main>

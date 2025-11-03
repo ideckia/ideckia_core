@@ -521,7 +521,7 @@
 	},
 	{
 		"id": "no_connection",
-		"text": "Could not connect to ideckia."
+		"text": "Could not connect to ideckia. Click the icon to reload."
 	},
 	{
 		"id": "yes",
