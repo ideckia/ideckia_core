@@ -20,13 +20,15 @@ class Batch {
 			if (ignoreActions.contains(d.replace('action_', '')))
 				continue;
 			Sys.setCwd(base + d);
+			trace(d);
 			// updateApi();
 			// localApi(d);
 			// haxeCompile(false); // build
 			// haxeCompile(true); // deploy
+			// gitCommit(d);
 			// gitStatus(d);
 			// gitPush(d);
-			trace(d + ': ' + gitNextTag());
+			trace(gitNextTag());
 			// gitCreateNewTag(d);
 			// gitPushLastTag(d);
 			// copyToIdeckia(d);
@@ -34,7 +36,6 @@ class Batch {
 			// gitGetBranchName(d);
 			// gitRenameMain();
 		}
-
 		if (actions.length > 0)
 			trace('Actions:\n  ' + actions.join('\n  '));
 	}
@@ -58,11 +59,11 @@ class Batch {
 
 	static function haxeCompile(deploy:Bool = false) {
 		var filename = deploy ? 'deploy.hxml' : 'build.hxml';
-		if (!sys.FileSystem.exists(filename))
-			return;
-		filename = deploy ? 'deploy_all.hxml' : 'build_all.hxml';
-		if (!sys.FileSystem.exists(filename))
-			return;
+		if (!sys.FileSystem.exists(filename)) {
+			filename = deploy ? 'deploy_all.hxml' : 'build_all.hxml';
+			if (!sys.FileSystem.exists(filename))
+				return;
+		}
 		Sys.command('haxe $filename');
 	}
 
@@ -136,6 +137,24 @@ class Batch {
 		}
 
 		return lastTag;
+	}
+
+	static function gitCommit(actionName:String) {
+		if (!sys.FileSystem.exists('.git'))
+			return;
+
+		var p = new Process('git add .github/workflows/release.yaml');
+		if (p.exitCode() != 0) {
+			trace('Error: ${p.stderr.readAll().toString()}');
+			return;
+		}
+		p = new Process('git commit -m "define fixed HAXE_VERSION in release.yaml"');
+		if (p.exitCode() != 0) {
+			trace('Error: ${p.stderr.readAll().toString()}');
+			return;
+		}
+
+		actions.push(actionName);
 	}
 
 	static function gitPushLastTag(actionName:String) {
