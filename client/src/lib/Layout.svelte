@@ -61,7 +61,7 @@
         return rows.join(" ") + " / " + cols.join(" ");
     });
 
-    function reloadClick(_) {
+    function onReloadClick(_) {
         location.reload();
     }
 
@@ -101,10 +101,6 @@
         socketConnected = false;
         if (isMobile) releaseWakeLock();
         screenfull.exit();
-
-        document
-            .getElementById("no_connection_div")
-            .addEventListener("click", reloadClick, { once: true });
     };
     socket.onerror = (err) => {
         log("error");
@@ -112,10 +108,6 @@
         socketConnected = false;
         if (isMobile) releaseWakeLock();
         screenfull.exit();
-
-        document
-            .getElementById("no_connection_div")
-            .addEventListener("click", reloadClick, { once: true });
     };
 
     function gotoDir(toDir) {
@@ -202,7 +194,11 @@
             </div>
         {/if}
     {:else}
-        <div id="no_connection_div">
+        <button
+            id="no_connection_btn"
+            title="reconnect"
+            onclick={onReloadClick}
+        >
             <svg id="no_connection" width="150" height="120">
                 <path
                     d="M 10 40 q 65 -60 130 0 M 30 60 q 45 -45 90 0 M 50 80 q 25 -25 50 0"
@@ -220,12 +216,15 @@
                     stroke-width="2"
                 />
             </svg>
-        </div>
+        </button>
         <p>::no_connection::</p>
     {/if}
 </main>
 
 <style>
+    #no_connection_btn {
+        background-color: rgba(0, 0, 0, 0);
+    }
     #items {
         display: grid;
         align-items: center;
