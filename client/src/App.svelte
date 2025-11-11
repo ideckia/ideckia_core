@@ -3,18 +3,26 @@
     import { innerWidth, innerHeight } from "svelte/reactivity/window";
     import screenfull from "screenfull";
 
-    let fullscreenUserDecisionMade = $state(false);
-
     let width = $derived(innerWidth.current);
     let height = $derived(innerHeight.current);
 
     window.oncontextmenu = (_) => false;
     const isVertical = $derived(width < height);
 
+    let fullscreenUserDecisionMade = $state(false);
+    let validFullscreenConbination = $state(true);
+    let wantsFullscreen = false;
     function fullscreenDecision(goFullscreen) {
         if (goFullscreen) screenfull.request();
+
+        wantsFullscreen = goFullscreen;
         fullscreenUserDecisionMade = true;
+        validFullscreenConbination = wantsFullscreen == screenfull.isFullscreen;
     }
+
+    screenfull.onchange((_) => {
+        validFullscreenConbination = wantsFullscreen == screenfull.isFullscreen;
+    });
 </script>
 
 <main>
@@ -42,7 +50,7 @@
                 fill="black"
             />
         </svg>
-    {:else if fullscreenUserDecisionMade}
+    {:else if fullscreenUserDecisionMade && validFullscreenConbination}
         <Layout {width} {height} />
     {:else}
         <svg id="fullscreen_svg" width="200" height="100">
