@@ -18,6 +18,8 @@ class Tray {
 	static public var showAboutOnStartup:Bool;
 
 	static var address:String;
+
+	static var trayProcess:js.node.child_process.ChildProcess;
 	static public var trayDir:String;
 
 	public static function create() {
@@ -39,52 +41,63 @@ class Tray {
 
 		menuDefContent = haxe.Json.stringify(menuDef).replace('"', '\\"');
 
-		var trayProcess = js.node.ChildProcess.spawn(exePath, ['"$menuDefContent"'], {shell: true});
+		trayProcess = js.node.ChildProcess.spawn(exePath, ['"$menuDefContent"'], {shell: true, detached: true});
+		trayProcess.unref();
 
-		trayProcess.stdout.on('data', d -> {
-			var out = Std.string(d);
-			var isEditor = out.startsWith('editor');
-			var isClient = out.startsWith('client');
-			if (isEditor || isClient) {
-				var launchCmd = switch Sys.systemName() {
-					case "Linux": 'xdg-open';
-					case "Mac": 'open';
-					case "Windows": 'start';
-					case _: '';
-				};
-
-				var endpoint = (isEditor) ? 'editor' : 'client';
-				var url = 'http://localhost:${port}/$endpoint';
-				Log.debug('Opening ${out}');
-				js.node.ChildProcess.spawn('$launchCmd $url', {shell: true});
-			} else if (out.startsWith('about')) {
-				showAboutDialog();
-			} else if (out.startsWith('config')) {
-				showConfigurationDialog();
-			} else if (out.startsWith('quit')) {
-				Sys.exit(0);
-			}
-		});
-		trayProcess.stderr.on('data', e -> {
-			Log.error('Tray error');
-			if (e.stack != null)
-				Log.raw(e.stack);
-			else
-				Log.raw(e);
-		});
-		trayProcess.on('error', e -> {
-			Log.error('Tray error');
-			if (e.stack != null)
-				Log.raw(e.stack);
-			else
-				Log.raw(e);
-		});
+		trayProcess.stdout.on('data', onTrayData);
+		trayProcess.stderr.on('data', onTrayError);
+		trayProcess.on('error', onTrayError);
 
 		if (showAboutOnStartup)
 			haxe.Timer.delay(showAboutDialog, 1000);
 	}
 
-	static function showConfigurationDialog() {
+	static function onTrayData(d) {
+		var out = Std.string(d);
+		var isEditor = out.startsWith('editor');
+		var isClient = out.startsWith('client');
+		if (isEditor || isClient) {
+			var launchCmd = switch Sys.systemName() {
+				case "Linux": 'xdg-open';
+				case "Mac": 'open';
+				case "Windows": 'start';
+				case _: '';
+			};
+
+			var endpoint = (isEditor) ? 'editor' : 'client';
+			var url = 'http://localhost:${port}/$endpoint';
+			Log.debug('Opening ${out}');
+			js.node.ChildProcess.spawn('$launchCmd $url', {shell: true});
+		} else if (out.startsWith('about')) {
+			showAboutDialog();
+		} else if (out.startsWith('config')) {
+			showConfigurationDialog();
+		} else if (out.startsWith('quit')) {
+			quitIdeckia(false);
+		}
+	}
+
+	static function onTrayError(e) {
+		Log.error('Tray error');
+		if (e.stack != null)
+			Log.raw(e.stack);
+		else
+			Log.raw(e);
+	}
+
+	public static function quitIdeckia(force:Bool = true) {
+		if (force && trayProcess != null) {
+			final pid = trayProcess.pid;
+			if (Sys.systemName() == "Windows") {
+				js.node.ChildProcess.exec('taskkill /PID ${pid} /T /F', (_, _, _) -> {});
+			} else {
+				js.Node.process.kill(-pid, 'SIGKILL');
+			}
+		}
+		Sys.exit(0);
+	}
+
+	public static function showConfigurationDialog() {
 		Ideckia.dialog.custom(Config.configDialogPath).then(responseOpt -> {
 			switch responseOpt {
 				case Some(response):
@@ -98,7 +111,7 @@ class Tray {
 		});
 	}
 
-	static function showAboutDialog() {
+	public static function showAboutDialog() {
 		Ideckia.dialog.custom(aboutDialogPath).then(responseOpt -> {
 			switch responseOpt {
 				case Some(response):

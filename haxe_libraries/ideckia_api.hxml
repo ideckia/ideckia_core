@@ -1,4 +1,4 @@
-# @install: lix --silent download "gh://github.com/ideckia/ideckia_api#d7703e078edc48eefe8b9fc6b60c4e584edde5cc" into ideckia_api/1.2.4/github/d7703e078edc48eefe8b9fc6b60c4e584edde5cc
--cp ${HAXE_LIBCACHE}/ideckia_api/1.2.4/github/d7703e078edc48eefe8b9fc6b60c4e584edde5cc/.
+# @install: lix --silent download "gh://github.com/ideckia/ideckia_api#dd7b3d9ce0da090e44de412fb4861a35c5b74fa0" into ideckia_api/1.2.4/github/dd7b3d9ce0da090e44de412fb4861a35c5b74fa0
+-cp ${HAXE_LIBCACHE}/ideckia_api/1.2.4/github/dd7b3d9ce0da090e44de412fb4861a35c5b74fa0/.
 -D ideckia_api=1.2.4
 --macro NoLocalLibs.check()

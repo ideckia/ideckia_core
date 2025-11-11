@@ -9,12 +9,28 @@ select {
     font-family: 'Ubuntu', sans-serif;
 }
 
+#menu-container {
+    position: relative;
+}
+
 menu {
     width: 35%;
 }
 
 .menu-right {
     float: right;
+}
+
+#control-menu {
+    position: absolute;
+    top: 15%;
+    right: 0;
+    width: 5%;
+}
+
+#control-menu > input {
+    float: right;
+    margin-bottom: 5px;
 }
 
 .icon {

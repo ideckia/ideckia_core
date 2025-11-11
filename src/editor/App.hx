@@ -17,6 +17,7 @@ class App {
 	public static var editorData:EditorData;
 	public static var icons:Array<IconData>;
 	public static var dirtyData(default, set):Bool = false;
+	public static var PORT:String;
 
 	public static function set_dirtyData(dd:Bool) {
 		dirtyData = dd;
@@ -32,6 +33,7 @@ class App {
 	}
 
 	function onLoad() {
+		PORT = js.Browser.location.port;
 		initWebsocketCore();
 
 		js.Browser.window.addEventListener('beforeunload', (e:Event) -> {
@@ -138,8 +140,7 @@ class App {
 					var input = Id.append_layout_input.as(InputElement);
 
 					reader.onload = function(e) {
-						final port = js.Browser.location.port;
-						var http = new haxe.Http('http://localhost:$port$layoutAppendEndpoint');
+						var http = new haxe.Http('http://localhost:$PORT$layoutAppendEndpoint');
 						http.addHeader('Content-Type', 'application/json');
 						http.onError = (e) -> {
 							var msg = Utils.formatString('::alert_append_error::', [e]);
@@ -191,8 +192,7 @@ class App {
 						}
 					}
 
-					final port = js.Browser.location.port;
-					var http = new haxe.Http('http://localhost:$port${directoryExportEndpoint}');
+					var http = new haxe.Http('http://localhost:$PORT${directoryExportEndpoint}');
 					http.addHeader('Content-Type', 'application/json');
 					http.onError = (e) -> js.Browser.alert(Utils.formatString('::alert_export_dir_error::', [e]));
 					http.onData = (d) -> {
@@ -426,8 +426,7 @@ class App {
 			});
 		});
 		Id.create_action_btn.get().addEventListener('click', (_) -> {
-			final port = js.Browser.location.port;
-			var http = new haxe.Http('http://localhost:$port$actionTemplatesEndpoint');
+			var http = new haxe.Http('http://localhost:$PORT$actionTemplatesEndpoint');
 			http.onError = (e) -> {
 				var msg = 'Error getting templates: $e';
 				js.Browser.alert(msg);
@@ -479,8 +478,7 @@ class App {
 							return;
 						}
 
-						final port = js.Browser.location.port;
-						var http = new haxe.Http('http://localhost:$port$newActionEndpoint');
+						var http = new haxe.Http('http://localhost:$PORT$newActionEndpoint');
 						http.addHeader('Content-Type', 'application/json');
 						http.onError = (e) -> {
 							var msg = Utils.formatString('::alert_action_create_error::', [actionName]);
@@ -542,22 +540,34 @@ class App {
 			}, 10);
 		});
 		Id.localize_me_btn.get().addEventListener('click', (_) -> {
-			final port = js.Browser.location.port;
-			var http = new haxe.Http('http://localhost:$port$newLocalizationEndpoint');
+			var http = new haxe.Http('http://localhost:$PORT$newLocalizationEndpoint');
 			http.onError = (e) -> {
-				js.Browser.alert(Utils.formatString('::alert_localizaation_create_error::', [e]));
+				js.Browser.alert(Utils.formatString('::alert_localization_create_error::', [e]));
 			};
 			http.onData = (d) -> {
-				js.Browser.alert(Utils.formatString('::alert_localizaation_create_ok::', [d]));
+				js.Browser.alert(Utils.formatString('::alert_localization_create_ok::', [d]));
 			};
 			http.request();
+		});
+		Id.configuration_btn.get().addEventListener('click', (_) -> {
+			var http = new haxe.Http('http://localhost:$PORT$configurationEndpoint');
+			http.request();
+		});
+		Id.about_btn.get().addEventListener('click', (_) -> {
+			var http = new haxe.Http('http://localhost:$PORT$aboutEndpoint');
+			http.request();
+		});
+		Id.quit_btn.get().addEventListener('click', (_) -> {
+			if (js.Browser.window.confirm('::confirm_quit_ideckia::')) {
+				var http = new haxe.Http('http://localhost:$PORT$quitEndpoint');
+				http.request();
+			}
 		});
 	}
 
 	public static function updateActionDescriptors() {
 		return new js.lib.Promise((resolve, reject) -> {
-			final port = js.Browser.location.port;
-			var http = new haxe.Http('http://localhost:$port$actionDescriptorsEndpoint');
+			var http = new haxe.Http('http://localhost:$PORT$actionDescriptorsEndpoint');
 			http.onError = (e) -> {
 				js.Browser.alert(Utils.formatString('::alert_get_descriptors_error::', [e]));
 				reject(e);
@@ -650,8 +660,7 @@ class App {
 	}
 
 	static function initWebsocketCore() {
-		final port = js.Browser.location.port;
-		websocket = new js.html.WebSocket('ws://127.0.0.1:${port}');
+		websocket = new js.html.WebSocket('ws://127.0.0.1:$PORT');
 
 		websocket.onopen = () -> {
 			var msg:EditorMsg = {

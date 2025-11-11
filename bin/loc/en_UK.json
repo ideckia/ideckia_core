@@ -344,6 +344,10 @@
 		"text": "The preset [{0}] has not the mandatory [props] field."
 	},
 	{
+		"id": "confirm_quit_ideckia",
+		"text": "Are you sure you want to quit ideckia?"
+	},
+	{
 		"id": "title_delete_using_icon",
 		"text": "This icon is used by some state, it cannot be removed."
 	},
@@ -476,10 +480,6 @@
 		"text": "editor"
 	},
 	{
-		"id": "tray_open_logs",
-		"text": "logs"
-	},
-	{
 		"id": "tray_open_conf",
 		"text": "configuration"
 	},
@@ -489,7 +489,7 @@
 	},
 	{
 		"id": "tray_quit",
-		"text": "quit"
+		"text": "quit ideckia"
 	},
 	{
 		"id": "configuration_title",

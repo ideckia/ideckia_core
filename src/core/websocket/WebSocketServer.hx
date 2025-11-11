@@ -1,14 +1,14 @@
 package websocket;
 
-import js.node.fs.ReadStream;
-import js.node.Fs;
-import api.internal.CoreApi.StateId;
+import api.IdeckiaApi.Endpoint;
 import api.internal.CoreApi.ActionId;
+import api.internal.CoreApi.StateId;
+import js.node.Fs;
+import js.node.Os;
+import js.node.fs.ReadStream;
 import managers.ActionManager;
 import managers.LayoutManager;
 import websocket.WebSocketConnection.WebSocketConnectionJs;
-import api.IdeckiaApi.Endpoint;
-import js.node.Os;
 
 using StringTools;
 
@@ -230,6 +230,24 @@ class WebSocketServer {
 									body: 'Could not find [$dirNames] directories in the layout file.'
 								});
 						};
+					});
+				} else if (request.method == 'GET' && requestUrl == configurationEndpoint) {
+					Tray.showConfigurationDialog();
+					resolve({
+						code: 200,
+						headers: headers
+					});
+				} else if (request.method == 'GET' && requestUrl == aboutEndpoint) {
+					Tray.showAboutDialog();
+					resolve({
+						code: 200,
+						headers: headers
+					});
+				} else if (request.method == 'GET' && requestUrl == quitEndpoint) {
+					Tray.quitIdeckia();
+					resolve({
+						code: 200,
+						headers: headers
 					});
 				} else {
 					resolve({

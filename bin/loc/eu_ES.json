@@ -344,6 +344,10 @@
 		"text": "Lehenetsietako [{0}] edukiak ez du derrigorrezko [props] eremua."
 	},
 	{
+		"id": "confirm_quit_ideckia",
+		"text": "Ziur zaude ideckia itxi nahi duzula?"
+	},
+	{
 		"id": "title_delete_using_icon",
 		"text": "Ikono hau egoeraren batek darabil, ezin da ezabatu."
 	},
@@ -476,10 +480,6 @@
 		"text": "editorea"
 	},
 	{
-		"id": "tray_open_logs",
-		"text": "log-ak"
-	},
-	{
 		"id": "tray_open_conf",
 		"text": "konfigurazioa"
 	},
@@ -489,7 +489,7 @@
 	},
 	{
 		"id": "tray_quit",
-		"text": "irten"
+		"text": "itxi ideckia"
 	},
 	{
 		"id": "configuration_title",
