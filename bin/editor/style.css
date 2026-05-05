@@ -1,12 +1,12 @@
 body {
     font-size: 0.8em;
-    font-family: 'Ubuntu', sans-serif;
+    font-family: sans-serif;
 }
 
 input,
 textarea,
 select {
-    font-family: 'Ubuntu', sans-serif;
+    font-family: sans-serif;
 }
 
 #menu-container {
