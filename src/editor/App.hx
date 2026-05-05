@@ -229,7 +229,7 @@ class App {
 			iconNameInput.value = '';
 			Id.new_icon_base64.as(TextAreaElement).value = '';
 			Id.new_icon_drop_img.get().addEventListener('drop', (e:DragEvent) -> {
-				Utils.stopPropagation(e);
+				Utils.preventDefaultStopPropagation(e);
 				var dataTransfer = e.dataTransfer;
 				if (dataTransfer.files.length > 0) {
 					var image = dataTransfer.files.item(0);
@@ -248,13 +248,13 @@ class App {
 					reader.readAsDataURL(image);
 				}
 			});
-			Id.new_icon_drop_img.get().addEventListener('dragover', (e) -> Utils.stopPropagation(e));
+			Id.new_icon_drop_img.get().addEventListener('dragover', (e) -> Utils.preventDefaultStopPropagation(e));
 			Id.new_icon_drop_img.get().addEventListener('dragenter', (e) -> {
-				Utils.stopPropagation(e);
+				Utils.preventDefaultStopPropagation(e);
 				Id.new_icon_drop_img.get().classList.add(Cls.icon_drag_over);
 			});
 			Id.new_icon_drop_img.get().addEventListener('dragleave', (e) -> {
-				Utils.stopPropagation(e);
+				Utils.preventDefaultStopPropagation(e);
 				Id.new_icon_drop_img.get().classList.remove(Cls.icon_drag_over);
 			});
 			Dialog.show('::show_title_new_icon::', Id.new_icon.get(), () -> {

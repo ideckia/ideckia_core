@@ -70,7 +70,7 @@ class StateEditor {
 		}
 
 		parentLi.addEventListener('click', (event:Event) -> {
-			Utils.stopPropagation(event);
+			Utils.preventDefaultStopPropagation(event);
 			Utils.selectElement(parentLi);
 			edit(state);
 		});
@@ -78,7 +78,7 @@ class StateEditor {
 		switch Cls.add_action_btn.firstFrom(parentLi) {
 			case Some(v):
 				v.addEventListener('click', (event) -> {
-					Utils.stopPropagation(event);
+					Utils.preventDefaultStopPropagation(event);
 
 					App.updateActionDescriptors().then(_ -> {
 						var actionDescriptors = App.editorData.actionDescriptors;

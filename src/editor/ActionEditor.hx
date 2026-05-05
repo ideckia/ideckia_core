@@ -79,6 +79,7 @@ class ActionEditor {
 				v.addEventListener('click', (event) -> {
 					App.dirtyData = true;
 					action.enabled = v.checked;
+					event.stopPropagation();
 				});
 			case None:
 				trace('No [${Cls.enable_check.selector()}] found in [${Id.action_list_item_tpl.selector()}]');
@@ -86,7 +87,7 @@ class ActionEditor {
 		switch Cls.delete_btn.firstFrom(li) {
 			case Some(v):
 				Utils.addListener(listeners, v, 'click', (event) -> {
-					Utils.stopPropagation(event);
+					Utils.preventDefaultStopPropagation(event);
 					if (js.Browser.window.confirm(Utils.formatString('::confirm_remove_action::', [action.name]))) {
 						parentState.actions.remove(action);
 						App.dirtyData = true;

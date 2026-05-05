@@ -78,7 +78,7 @@ class ItemEditor {
 		cell.style.borderRadius = '${buttonSize * 0.3}px';
 
 		cell.addEventListener('click', (event:Event) -> {
-			Utils.stopPropagation(event);
+			Utils.preventDefaultStopPropagation(event);
 			Utils.selectElement(cell);
 			Utils.hideAllProps();
 
@@ -176,7 +176,7 @@ class ItemEditor {
 		isFixedItem = isFixed;
 
 		Utils.addListener(listeners, Id.add_state_btn.get(), 'click', (event) -> {
-			Utils.stopPropagation(event);
+			Utils.preventDefaultStopPropagation(event);
 
 			switch editingItem.kind {
 				case States(_, states):
@@ -189,7 +189,7 @@ class ItemEditor {
 		});
 
 		Utils.addListener(listeners, Id.clear_item_btn.get(), 'click', (event) -> {
-			Utils.stopPropagation(event);
+			Utils.preventDefaultStopPropagation(event);
 			if (js.Browser.window.confirm('::confirm_clear_item::')) {
 				editingItem.kind = null;
 				App.dirtyData = true;
@@ -204,7 +204,7 @@ class ItemEditor {
 		if (isFixed) {
 			Id.remove_item_btn.get().classList.remove(Cls.hidden);
 			Utils.addListener(listeners, Id.remove_item_btn.get(), 'click', (event) -> {
-				Utils.stopPropagation(event);
+				Utils.preventDefaultStopPropagation(event);
 				if (js.Browser.window.confirm('::confirm_remove_item::')) {
 					editingItem.kind = null;
 

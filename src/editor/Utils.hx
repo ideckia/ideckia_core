@@ -55,7 +55,7 @@ class Utils {
 		listeners = [];
 	}
 
-	public static function stopPropagation(e:Event) {
+	public static function preventDefaultStopPropagation(e:Event) {
 		e.preventDefault();
 		e.stopPropagation();
 	}
