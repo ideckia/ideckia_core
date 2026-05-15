@@ -147,6 +147,8 @@
     let isLongPressed = false;
 
     function onclick(event) {
+        // In some cases, this function is called when LongPress gesture is detected.
+        // That is why is this validation here.
         if (isLongPressed) {
             isLongPressed = false;
             return;
@@ -158,6 +160,7 @@
     function onlongpress() {
         isLongPressed = true;
         onitemclick(id, true);
+        isLongPressed = false;
     }
 
     function onrightclick(_) {
