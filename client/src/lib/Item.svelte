@@ -144,37 +144,45 @@
         return text;
     }
 
-    let isLongPressed = false;
-
-    function onclick(event) {
-        // In some cases, this function is called when LongPress gesture is detected.
-        // That is why is this validation here.
-        if (isLongPressed) {
-            isLongPressed = false;
-            return;
-        }
-
+    function onclick() {
         onitemclick(id, false);
     }
 
     function onlongpress() {
-        isLongPressed = true;
         onitemclick(id, true);
-        isLongPressed = false;
     }
 
     function onrightclick(_) {
-        if (!isMobile) setTimeout(onclick, 2000);
+        // in mobile phones, this event is fired when an item is long pressed
+        isMobile ? onlongpress() : setTimeout(onclick, 2000);
     }
 
-    function onload(b) {
-        const longpressMs = 500;
-        initLongPress(b, onlongpress, longpressMs);
+    let isMouseDown;
+    let mouseDownStart;
+
+    function onmousedown(event) {
+        if (event.button != 0) return;
+        if (isMobile) return;
+
+        mouseDownStart = Date.now();
+        isMouseDown = true;
+        setTimeout(() => {
+            if (isMouseDown) onlongpress();
+            isMouseDown = false;
+        }, 500);
+    }
+
+    function onmouseup(event) {
+        if (event.button != 0) return;
+
+        if (isMobile) onclick();
+        else if (isMouseDown)
+            Date.now() - mouseDownStart > 500 ? onlongpress() : onclick();
+        isMouseDown = false;
     }
 </script>
 
 <button
-    use:onload
     id="item_{id}"
     class="{textPosClass} {isFixed ? 'fixed' : ''} not-selectable"
     style:width="{buttonSize}px"
@@ -183,7 +191,8 @@
     style:background-color="#{htmlBgColor}"
     style:background-image={htmlIcon}
     style:background-size="{buttonSize * 0.8}px"
-    {onclick}
+    {onmousedown}
+    {onmouseup}
     oncontextmenu={onrightclick}
 >
     <span style:font-size="{htmlTextSize}px" style:color="#{htmlColor}">
