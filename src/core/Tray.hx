@@ -146,7 +146,7 @@ class Tray {
 		Config.createConfigDialogData();
 
 		WebSocketServer.getIPAddress().then(ip -> {
-			address = '$ip:$port';
+			address = 'http://$ip:$port';
 			copyAbout();
 		});
 	}
@@ -204,7 +204,7 @@ class Tray {
 		var aboutContent = sys.io.File.getContent(haxe.io.Path.join([js.Node.__dirname, TRAY_DIR_NAME, 'about_tpl.json']));
 		aboutContent = CoreLoc.localizeAll(aboutContent);
 		aboutContent = aboutContent.replace('::version::', Ideckia.CURRENT_VERSION);
-		aboutContent = aboutContent.replace('::client_address::', 'http://$address/client');
+		aboutContent = aboutContent.replace('::client_address::', '$address/client');
 		aboutContent = aboutContent.replace('::qr_path::', 'file://$qrPath');
 		aboutContent = aboutContent.replace('::startup_checked::', showAboutOnStartup ? 'true' : 'false');
 		aboutDialogPath = haxe.io.Path.join([trayDir, aboutFilename]);
