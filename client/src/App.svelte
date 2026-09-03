@@ -23,6 +23,13 @@
     screenfull.onchange((_) => {
         validFullscreenConbination = wantsFullscreen == screenfull.isFullscreen;
     });
+
+    document.addEventListener("keydown", (e) => {
+        if (isVertical) return;
+        if (fullscreenUserDecisionMade && validFullscreenConbination) return;
+
+        if (e.key == "Escape") fullscreenDecision(false);
+    });
 </script>
 
 <main>
@@ -72,8 +79,8 @@
             />
         </svg>
         <p>::better_exp_fullscreen::</p>
-        <button onclick={() => fullscreenDecision(true)}>::yes::</button>
-        <button onclick={() => fullscreenDecision(false)}>::no::</button>
+        <button onclick={(_) => fullscreenDecision(true)}>::yes::</button>
+        <button onclick={(_) => fullscreenDecision(false)}>::no::</button>
     {/if}
 </main>
 
